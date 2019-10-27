@@ -1,0 +1,76 @@
+; half_b
+
+half_b nop
+
+movlw bSize
+movwf loop
+addwf pntr1, f
+
+clrf  var
+;======
+loop_e   decf  pntr1, f 
+
+btfsc var, 0
+bsf STATUS, C
+bcf var,0
+movf pntr1, w
+movwf FSR
+rrf INDF, f ; the rotate
+
+bcf var, 0
+btfsc STATUS, C
+bsf var, 0
+
+
+decfsz loop,  f
+goto loop_e
+
+return
+
+
+; plus equals: (*pntr1) += (*pntr2)
+
+plus_equals movlw bSize
+
+movwf loop
+clrf var
+
+
+
+loop_f nop
+
+
+movf pntr2, w
+movwf FSR
+movf INDF, w
+movwf temp
+movf pntr1, w
+movwf FSR
+
+
+btfsc var, 0 ; did we have a carry last time?
+incf temp, f
+movf temp, w
+
+bcf var, 0
+
+btfsc STATUS, C
+bsf var, 0
+
+addwf INDF, f
+
+btfsc STATUS, C
+bsf var, 0
+incf pntr1, f
+incf pntr2, f
+
+decfsz loop
+goto loop_f
+movlw bSize
+subwf pntr1, f
+subwf pntr2, f
+return
+
+
+X = (*pntr)
+subtract
