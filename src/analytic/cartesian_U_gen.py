@@ -24,8 +24,8 @@ def theta_ij(i,j):
 def U_ij(i,j,xs, ys):
     rneg3 = r_ij(i,j)**-3
     tht = theta_ij(i,j)
-    co_tht = cos(tht)
-    sn_tht = sin(tht)
+    co_tht = cos(2*tht)
+    sn_tht = sin(2*tht)
     # sympy.pprint((i,j,rneg3, tht, co_tht, sn_tht))
     return (
         xs[i]*xs[j]
@@ -95,8 +95,8 @@ def pickle_potential():
             total_U+= term/2
     # sympy.pprint(total_U)
     total_U = sympy.simplify(total_U)
-    # sympy.pprint(total_U)
-    # mathjaxify(total_U)
+    sympy.pprint(total_U)
+    mathjaxify(total_U)
     # pickle.dump(total_U, output)
     # output.close()
 

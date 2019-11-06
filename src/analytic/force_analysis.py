@@ -68,13 +68,19 @@ def cart_force_equations():
             equations.append(force)
     # lam_vals = sympy.solve(equations)
     # sympy.pprint(lam_vals)
-    just_xy_forces = []
-    for i in range(len(equations)):
-        if i%3==2:
-            continue
-        just_xy_forces.append(equations[i])
-    x_y_solutions = sympy.solve(just_xy_forces)
-    sympy.pprint(x_y_solutions)
+    # just_xy_forces = []
+    # for i in range(len(equations)):
+    #     if i%3==2:
+    #         continue
+    #     just_xy_forces.append(equations[i])
+    # x_y_solutions = sympy.solve(just_xy_forces)
+    # sympy.pprint(x_y_solutions)
+    sympy.pprint(equations[:3])
+    lam0_solnx = sympy.solve(equations[0], coords[2][0])
+    lam0_solny = sympy.solve(equations[1], coords[2][0])
+    sympy.pprint(lam0_solnx)
+    sympy.pprint(lam0_solnx)
+    sympy.pprint(lam0_solny)
 
 # force_equations()
 
