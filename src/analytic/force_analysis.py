@@ -1,6 +1,6 @@
 import sympy
 from generate_U import full_potential, phi_gen
-from cartesian_U_gen import full_potential, symb_gen
+import cartesian_U_gen as c_U_gen
 import pickle
 import random
 pi = sympy.pi
@@ -52,8 +52,32 @@ def bulk_evals():
     #         # print(phi_vals)
     #         sympy.pprint(total_U.subs(phi_vals).evalf())
 
+def cart_force_equations():
+    all_terms, coords = c_U_gen.full_potential()
+    total_U = 0
+    # output = open('U_expr.pkl', 'wb')
+    for row in all_terms:
+        for term in row:
+            total_U+= term/2
+    equations = []
+    for i in range(7):
+        for dim in coords:
+            # sympy.pprint(dim[i])
+            force = total_U.diff(dim[i]).simplify()
+            # sympy.pprint(force)
+            equations.append(force)
+    # lam_vals = sympy.solve(equations)
+    # sympy.pprint(lam_vals)
+    just_xy_forces = []
+    for i in range(len(equations)):
+        if i%3==2:
+            continue
+        just_xy_forces.append(equations[i])
+    x_y_solutions = sympy.solve(just_xy_forces)
+    sympy.pprint(x_y_solutions)
+
 # force_equations()
 
 if __name__=='__main__':
     # bulk_evals()
-
+    cart_force_equations()

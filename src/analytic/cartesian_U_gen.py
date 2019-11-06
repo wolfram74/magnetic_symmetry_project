@@ -26,6 +26,7 @@ def U_ij(i,j,xs, ys):
     tht = theta_ij(i,j)
     co_tht = cos(tht)
     sn_tht = sin(tht)
+    # sympy.pprint((i,j,rneg3, tht, co_tht, sn_tht))
     return (
         xs[i]*xs[j]
         +ys[i]*ys[j]
@@ -58,6 +59,7 @@ def full_potential():
                 row.append(0)
                 continue
             row.append(U_ij(i,j,x_s,y_s))
+# http://www.physics.usu.edu/torre/6010_Fall_2010/Lectures/03.pdf
         row.append(lam_s[i]*(x_s[i]**2+y_s[i]**2-1))
         all_terms.append(row)
     return (all_terms, (x_s, y_s, lam_s))
@@ -78,6 +80,10 @@ def mathjax_table(all_terms):
 def for_mathjax():
     mathjax_table(full_potential()[0])
 
+def mathjaxify(expr):
+    print(sympy.latex(expr).replace('\\', '\\\\'))
+
+
 def pickle_potential():
     U_terms, xs_ys_lams = full_potential()
     # gamma = sympy.symbols('gamma') #mu0*mu1*mu2/8pi
@@ -87,12 +93,14 @@ def pickle_potential():
     for row in U_terms:
         for term in row:
             total_U+= term/2
-    sympy.pprint(total_U)
+    # sympy.pprint(total_U)
     total_U = sympy.simplify(total_U)
-    sympy.pprint(total_U)
+    # sympy.pprint(total_U)
+    # mathjaxify(total_U)
     # pickle.dump(total_U, output)
     # output.close()
 
 if __name__=='__main__':
     # full_potential()
     pickle_potential()
+    # for_mathjax()
