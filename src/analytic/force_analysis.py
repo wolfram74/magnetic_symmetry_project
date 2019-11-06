@@ -1,5 +1,6 @@
 import sympy
 from generate_U import full_potential, phi_gen
+from cartesian_U_gen import full_potential, symb_gen
 import pickle
 import random
 pi = sympy.pi
@@ -53,4 +54,6 @@ def bulk_evals():
 
 # force_equations()
 
-bulk_evals()
+if __name__=='__main__':
+    # bulk_evals()
+
