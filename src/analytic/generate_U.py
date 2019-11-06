@@ -3,7 +3,9 @@ based on the work here
 https://wolfram74.github.io/worked_problems/fall_19/week_2019_10_14/view.html
 assumes l = 1
 '''
+
 import sympy
+import pickle
 pi = sympy.pi
 cos = sympy.cos
 sin = sympy.sin
@@ -19,8 +21,11 @@ def theta_ij(i,j):
         return (j-1)*2*pi/6
     return ((1+2*i+(j-i)%6)%12)*pi/6
 
+def phi_gen():
+    return sympy.symbols('phi0 phi1 phi2 phi3 phi4 phi5 phi6')
+
 def full_potential():
-    phis = sympy.symbols('phi0 phi1 phi2 phi3 phi4 phi5 phi6')
+    phis = phi_gen()
     gamma = sympy.symbols('gamma') #mu0*mu1*mu2/8pi
     sympy.pprint(phis)
     all_terms = []
@@ -37,7 +42,8 @@ def full_potential():
                     )
                 )/r_ij(i,j)**3)
         all_terms.append(row)
-    mathjax_table(all_terms)
+    return (all_terms, phis)
+
 def mathjax_out(expr):
     return( sympy.latex(expr).replace('\\', '\\\\') )
 
@@ -51,5 +57,26 @@ def mathjax_table(all_terms):
         print(row)
         print('\\\\\\\\')
 
+def for_mathjax():
+    mathjax_table(full_potential()[0])
 
-full_potential()
+def pickle_potential():
+    U_terms, phis = full_potential()
+    gamma = sympy.symbols('gamma') #mu0*mu1*mu2/8pi
+
+    total_U = 0
+    output = open('U_expr.pkl', 'wb')
+    for row in U_terms:
+        for term in row:
+            total_U+= term/2
+    sympy.pprint(total_U)
+    total_U = sympy.collect(total_U, gamma)
+    sympy.pprint(total_U)
+    total_U = sympy.simplify(total_U)
+    sympy.pprint(total_U)
+    pickle.dump(total_U, output)
+    output.close()
+
+if __name__=='__main__':
+    # full_potential()
+    pickle_potential()
