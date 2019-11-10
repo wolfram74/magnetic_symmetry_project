@@ -1,0 +1,21 @@
+magnet symmetry
+https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=magnet%20symmetry&searchWithin="Publication%20Number":20&highlight=true&returnFacets=ALL&returnType=SEARCH&rowsPerPage=75
+
+Influence of machine symmetry on reduction of cogging torque in permanent-magnet brushless motors
+	analysis is done to determine how important symmetry is on certain properties of motors
+
+Realization of an iron-free superconducting quadrupole lens
+	https://ieeexplore.ieee.org/document/1065870
+
+Fault tolerance of magnetic bearings by generalized bias current linearization
+	https://ieeexplore.ieee.org/document/376229
+
+Performance of a brushless DC motor due to the axial geometry of the permanent magnet
+	https://ieeexplore.ieee.org/document/619676
+
+Performance of quadrupole and sextupole magnets for the Advanced Photon Source storage ring
+	https://ieeexplore.ieee.org/document/305814
+
+Design and Experimental Verification of a Short-Circuit Proof Six-Phase Permanent Magnet Machine for Safety Critical Applications
+	https://ieeexplore.ieee.org/document/6971708
+	eh, not so relevant in retrospect
