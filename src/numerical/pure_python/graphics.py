@@ -32,7 +32,7 @@ class collage_builder():
         ax.text(-2.4, -2.1, 'U='+str('%.6g'%u)+'  m='+str('%.6g'%dipole_moment)+'  tau^2='+str('%.6g'%tau), color='k')
         plt.savefig('temp'+str(self.num_graphs)+'.jpg')
         self.files_list.append('temp'+str(self.num_graphs)+'.jpg')
-
+        plt.close()
 
     def create_collage(self, filename, width=2000, height=3000):
         cols = 6

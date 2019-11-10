@@ -6,7 +6,7 @@ import numpy as np
 import random
 
 
-def find_solutions(positions, filename='Collage.png'):
+def find_solutions(positions, filename='Collage.png', iters=100):
     # generate important functions
 
     torque_function, potential_function, hessian_function = symbolic_manipulations.derive_functions(generate_equation.get_equations(positions), len(positions))
@@ -48,7 +48,7 @@ def find_solutions(positions, filename='Collage.png'):
     seen_u = []
     seen = []
 
-    for i in range(1, 100):
+    for i in range(1, iters):
         if not i % 1000:
             print('   '+str(i))
         output = scipy.optimize.minimize(torque_function, [random.uniform(0, 2*np.pi) for i in range(len(positions))])
