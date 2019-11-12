@@ -1,0 +1,4 @@
+calculating positional stability
+	1) calculate 0 torque states
+	2) find F_B_i for each magnet
+	3)

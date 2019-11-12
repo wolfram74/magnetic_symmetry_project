@@ -19,6 +19,8 @@ def r_ij(i,j):
 def theta_ij(i,j):
     if i ==0:
         return (j-1)*2*pi/6
+    if j ==0:
+        return (j-1)*2*pi/6+pi
     return ((1+2*i+(j-i)%6)%12)*pi/6
 
 def U_ij(i,j,xs, ys):

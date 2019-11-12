@@ -19,6 +19,8 @@ def r_ij(i,j):
 def theta_ij(i,j):
     if i ==0:
         return (j-1)*2*pi/6
+    if j ==0:
+        return (i-1)*2*pi/6+pi
     return ((1+2*i+(j-i)%6)%12)*pi/6
 
 def phi_gen():
@@ -40,7 +42,8 @@ def full_potential():
                 +3*cos(
                     phis[i]+phis[j]-2*theta_ij(i,j)
                     )
-                )/r_ij(i,j)**3)
+                )/(r_ij(i,j)**3))
+            # sympy.pprint([i,j, r_ij(i,j)**3])
         all_terms.append(row)
     return (all_terms, phis)
 
@@ -68,15 +71,33 @@ def pickle_potential():
     output = open('U_expr.pkl', 'wb')
     for row in U_terms:
         for term in row:
-            total_U+= term/2
+            total_U-= term/2
     sympy.pprint(total_U)
     total_U = sympy.collect(total_U, gamma)
-    sympy.pprint(total_U)
-    total_U = sympy.simplify(total_U)
-    sympy.pprint(total_U)
+    # sympy.pprint(total_U)
+    # total_U = sympy.simplify(total_U)
+    # sympy.pprint(total_U)
+    # phi_vals = [(phi, 0.) for phi in phis]
+    # U_tote = total_U.subs(phi_vals).evalf()
+    # sympy.pprint(U_tote)
+    # sympy.pprint(U_tote/7)
+
     pickle.dump(total_U, output)
     output.close()
 
 if __name__=='__main__':
     # full_potential()
     pickle_potential()
+
+'''
+r + '^-5*(
+    -3*(
+        '+R_hat[0] +'*'+A[0]+'+' +R_hat[1] +'*'+ A[1] +'
+        )*(
+        '+R_hat[0] +'*'+B[0]+'+' +R_hat[1] +'*'+ B[1] +'
+        )
+) +'+ r + '^-3*('+ A[0]+'*'+B[0]+'+'+A[1]+'*'+B[1]+')'
+question: is R_hat[0]**2+R_hat[1]**2=1 or =|R|**2
+
+'''
+
