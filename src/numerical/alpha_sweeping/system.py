@@ -35,7 +35,7 @@ class System():
         self.kernel_step = 0
         self.delta_4 = numpy.zeros(2*7)
         self.delta_5 = numpy.zeros(2*7)
-        self.step_size = 2**-3
+        self.step_size = 2**-6
         self.tolerance = 2**-20 #2**-10 ~= 1E-3
         self.elapsed=0
         # self.torques = [[0 for i in range(7)] for j in range(7)]
@@ -68,37 +68,6 @@ class System():
         self.r_vals[i][j]=r
         self.theta_vals[i][j]=tht
         return
-
-    # def calc_torques_eqs(self):
-    #     for i in range(7):
-    #         for j in range(7):
-    #             self.set_torque_eq(i, j)
-    #     return
-
-    # def set_torque_eq(self, i,j):
-    #     if i==j:
-    #         self.torques[i][j] = self.gen_drag(i)
-    #         return
-    #     self.torques[i][j] = self.gen_torque(i,j)
-    #     return
-
-    # def gen_drag(self, i):
-    #     def dragi(self):
-    #         delta = numpy.zeros(2*7)
-    #         delta[i+7] = -self.gamma*self.state[i+7]
-    #         return delta
-    #     return dragi
-
-    # def gen_torque(self, i, j):
-    #     deltas = numpy.zeros(2*7)
-    #     strength = 1
-    #     if 0 in (i,j):
-    #         strength = self.alpha
-    #     t1 = sin(self.state[i] - self.state[j])
-    #     t2 = 3.*sin(self.state[i]+self.state[j]-2*self.theta_vals[i][j])
-    #     r3 = self.r_vals[i][j]**(-3)
-    #     deltas[i] =streng*r3*(t1+t2)
-    #     return deltas
 
     def force_ij(self, state, i,j):
         deltas = numpy.zeros(2*7)
@@ -177,6 +146,7 @@ class System():
     def rk45_step(self):
         for k in range(6):
             self.kernels[k] = self.step_size*self.total_force()
+        self.kernel_step = 0
         self.delta_4 = (
             25.*self.kernels[0]/216.
             +1408.*self.kernels[2]/2565.
@@ -191,4 +161,38 @@ class System():
             +2.*self.kernels[5]/55.
             ) #O
         return
+
+    def step_rescale(self):
+        rescale = 10.**6
+        numer = self.tolerance*self.step_size
+        for ind in range(len(self.delta_4)):
+            diff = abs(self.delta_4[ind]-self.delta_5[ind])
+            if diff ==0:
+                proposed = 1
+                continue
+            proposed = (
+                numer/(2.*diff)
+            )**.25
+            if proposed < rescale:
+                rescale = proposed
+        return rescale
+
+    def advance_in_time(self):
+        self.rk45_step()
+        adjust = self.step_rescale()
+        if adjust < .9:
+            self.step_size *= adjust
+            self.advance_in_time()
+        self.state+=self.delta_5
+        self.elapsed += self.step_size
+        if adjust > 1.25:
+            adjust = 1.25
+        self.step_size *= adjust
+        return self.elapsed
+
+    def total_KE(self):
+        print(self.state**2)
+        print((self.state**2)[7:])
+        KE = sum((self.state**2)[7:])
+        return KE
 
