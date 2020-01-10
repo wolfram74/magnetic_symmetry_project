@@ -130,9 +130,65 @@ class System():
         return tote_delta
 
     def temp_state(self):
+        if self.kernel_step==0:
+            temp_vals = (
+                self.state
+                +self.kernels[0]*0.
+                )
+        if self.kernel_step==1:
+            temp_vals = (
+                self.state
+                +self.kernels[0]/4.
+                )
+        if self.kernel_step==2:
+            temp_vals = (
+                self.state
+                +3.*self.kernels[0]/32.
+                +9.*self.kernels[1]/32.
+                )
+        if self.kernel_step==3:
+            temp_vals = (
+                self.state
+                +1932.*self.kernels[0]/2197.
+                -7200.*self.kernels[1]/2197.
+                +7296.*self.kernels[2]/2197.
+                )
+        if self.kernel_step==4:
+            temp_vals = (
+                self.state
+                +439.*self.kernels[0]/216.
+                -8.*self.kernels[1]/1.
+                +3680.*self.kernels[2]/513.
+                -845.*self.kernels[3]/4104.
+                )
+        if self.kernel_step==5:
+            temp_vals = (
+                self.state
+                -8.*self.kernels[0]/27.
+                +2.*self.kernels[1]/1.
+                -3544.*self.kernels[2]/2565.
+                +1859.*self.kernels[3]/4104.
+                -11.*self.kernels[4]/40.
+                )
+
         self.kernel_step += 1
-        return self.state
+        return temp_vals
 
     def rk45_step(self):
-        for k in range(6)
+        for k in range(6):
             self.kernels[k] = self.step_size*self.total_force()
+        self.delta_4 = (
+            25.*self.kernels[0]/216.
+            +1408.*self.kernels[2]/2565.
+            +2197.*self.kernels[3]/4104.
+            -1.*self.kernels[4]/5.
+            )
+        self.delta_5 = (
+            16.*self.kernels[0]/135.
+            +6656.*self.kernels[2]/12825.
+            +28561.*self.kernels[3]/56430.
+            -9.*self.kernels[4]/50.
+            +2.*self.kernels[5]/55.
+            ) #O
+        return
+
