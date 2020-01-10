@@ -31,6 +31,7 @@ class System():
         self.alpha = 0.
         self.gamma = 0.
         self.state = numpy.zeros(7*2)
+        self.state[0]+=pi/12
         self.kernels = numpy.zeros((6,7*2))
         self.kernel_step = 0
         self.delta_4 = numpy.zeros(2*7)
@@ -74,6 +75,7 @@ class System():
         if i==j:
             delta = numpy.zeros(2*7)
             delta[i+7] = -self.gamma*state[i+7]
+            delta[i] = state[i+7]
             return delta
         strength = 1
         if 0 in (i,j):
@@ -81,8 +83,22 @@ class System():
         t1 = sin(state[i] - state[j])
         t2 = 3.*sin(state[i]+state[j]-2*self.theta_vals[i][j])
         r3 = self.r_vals[i][j]**(-3)
-        deltas[i] =strength*r3*(t1+t2)
+        # if i == 0:
+        #     print(-strength*r3*(t1+t2)/2)
+        deltas[i+7] =-strength*r3*(t1+t2)/2
         return deltas
+
+    def PE_ij(self, i,j):
+        if i==j:
+            return 0.
+        strength = 1
+        if 0 in (i,j):
+            strength = self.alpha
+        # print(strength)
+        t1 = cos(self.state[i] - self.state[j])
+        t2 = 3.*cos(self.state[i]+self.state[j]-2*self.theta_vals[i][j])
+        r3 = self.r_vals[i][j]**(-3)
+        return -strength*r3*(t1+t2)/2
 
     def set_init_state(self):
         for i in range(1,7):
@@ -96,6 +112,8 @@ class System():
         for i in range(7):
             for j in range(7):
                 tote_delta+= self.force_ij(temp_state, i, j)
+            # if i== 0:
+            #     print('deep', tote_delta)
         return tote_delta
 
     def temp_state(self):
@@ -139,13 +157,12 @@ class System():
                 +1859.*self.kernels[3]/4104.
                 -11.*self.kernels[4]/40.
                 )
-
-        self.kernel_step += 1
         return temp_vals
 
     def rk45_step(self):
         for k in range(6):
             self.kernels[k] = self.step_size*self.total_force()
+            self.kernel_step += 1
         self.kernel_step = 0
         self.delta_4 = (
             25.*self.kernels[0]/216.
@@ -180,6 +197,7 @@ class System():
     def advance_in_time(self):
         self.rk45_step()
         adjust = self.step_rescale()
+        # print(adjust, self.step_size, self.elapsed)
         if adjust < .9:
             self.step_size *= adjust
             self.advance_in_time()
@@ -191,8 +209,16 @@ class System():
         return self.elapsed
 
     def total_KE(self):
-        print(self.state**2)
-        print((self.state**2)[7:])
         KE = sum((self.state**2)[7:])
         return KE
 
+    def total_PE(self):
+        PE = 0.
+        for i in range(7):
+            for j in range(7):
+                PE += self.PE_ij(i,j)
+        return PE
+
+    def total_delta_sqr(self):
+        changes = self.total_force()
+        return sum( (changes**2) )
