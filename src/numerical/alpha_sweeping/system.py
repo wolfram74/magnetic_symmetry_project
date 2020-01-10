@@ -41,6 +41,7 @@ class System():
         # self.torques = [[0 for i in range(7)] for j in range(7)]
         self.calc_geometry()
         # self.calc_torques_eqs()
+        self.set_init_state()
 
     def calc_geometry(self):
         for i in range(7):
@@ -103,14 +104,35 @@ class System():
         deltas = numpy.zeros(2*7)
         if i==j:
             delta = numpy.zeros(2*7)
-            delta[i+7] = -self.gamma*self.state[i+7]
+            delta[i+7] = -self.gamma*state[i+7]
             return delta
         strength = 1
         if 0 in (i,j):
             strength = self.alpha
-        t1 = sin(self.state[i] - self.state[j])
-        t2 = 3.*sin(self.state[i]+self.state[j]-2*self.theta_vals[i][j])
+        t1 = sin(state[i] - state[j])
+        t2 = 3.*sin(state[i]+state[j]-2*self.theta_vals[i][j])
         r3 = self.r_vals[i][j]**(-3)
-        deltas[i] =streng*r3*(t1+t2)
+        deltas[i] =strength*r3*(t1+t2)
         return deltas
 
+    def set_init_state(self):
+        for i in range(1,7):
+            self.state[i]=pi/2+2*pi*(i-1)/6
+        return
+
+
+    def total_force(self):
+        tote_delta = numpy.zeros(2*7)
+        temp_state = self.temp_state()
+        for i in range(7):
+            for j in range(7):
+                tote_delta+= self.force_ij(temp_state, i, j)
+        return tote_delta
+
+    def temp_state(self):
+        self.kernel_step += 1
+        return self.state
+
+    def rk45_step(self):
+        for k in range(6)
+            self.kernels[k] = self.step_size*self.total_force()
