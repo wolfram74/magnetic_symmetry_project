@@ -31,7 +31,7 @@ class System():
         self.alpha = 0.
         self.gamma = 0.
         self.state = numpy.zeros(7*2)
-        self.state[0]+=pi/12
+        self.state[0]+=pi/120
         self.kernels = numpy.zeros((6,7*2))
         self.kernel_step = 0
         self.delta_4 = numpy.zeros(2*7)
@@ -98,7 +98,7 @@ class System():
         t1 = cos(self.state[i] - self.state[j])
         t2 = 3.*cos(self.state[i]+self.state[j]-2*self.theta_vals[i][j])
         r3 = self.r_vals[i][j]**(-3)
-        return -strength*r3*(t1+t2)/2
+        return -strength*r3*(t1+t2)/2.
 
     def set_init_state(self):
         for i in range(1,7):
@@ -222,3 +222,24 @@ class System():
     def total_delta_sqr(self):
         changes = self.total_force()
         return sum( (changes**2) )
+
+
+    def net_dipole_moment(self):
+        moment = numpy.zeros(2)
+        for i in range(7):
+            moment+=self.mag_moment_i(i)
+        return moment
+
+    def net_dipole_mag(self):
+        return numpy.linalg.norm(self.net_dipole_moment())
+
+    def dipole_strength(self, i):
+        if i== 0:
+            return self.alpha
+        return 1.
+
+    def mag_moment_i(self, i):
+        direction = numpy.zeros(2)
+        direction[0] = cos(self.state[i])
+        direction[1] = sin(self.state[i])
+        return self.dipole_strength(i)*direction

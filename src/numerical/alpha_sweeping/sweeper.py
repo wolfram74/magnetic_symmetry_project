@@ -34,7 +34,11 @@ def gen_text():
         print(magnets.total_delta_sqr(), magnets.total_PE())
         print(magnets.state[:7])
         print('\n')
-        equilibria.append([magnets.alpha,tuple(magnets.state[:7])])
+        equilibria.append(
+            [magnets.alpha,
+            tuple(magnets.state[:7]),
+            magnets.net_dipole_mag(), magnets.total_PE()]
+            )
         # if magnets.alpha < 1.:
         magnets.alpha+=.05
         # else:
@@ -46,9 +50,10 @@ def gen_text():
         monitor = 10
         if magnets.alpha > 3.01:
             running = False
-    # plotter(equilibria)
+    # angle_plotter(equilibria)
+    state_plotter(equilibria)
 
-def plotter(equilibs):
+def angle_plotter(equilibs):
     gam_0 = equilibs[0][1]
     figure, subplots = pyplot.subplots(2,1)
     alpha = [el[0] for el in equilibs]
@@ -61,6 +66,20 @@ def plotter(equilibs):
     pyplot.xlabel('$\\alpha$', fontsize=16)
     pyplot.savefig('%d.png' % time.time())
     return
+
+def state_plotter(equilibs):
+    figure, subplots = pyplot.subplots(2,1)
+    alpha = [el[0] for el in equilibs]
+    mu = [el[2] for el in equilibs]
+    PE = [el[3] for el in equilibs]
+    subplots[0].plot(alpha, mu, label='mu')
+    subplots[1].plot(alpha, PE, label='PE')
+    pyplot.legend()
+    pyplot.xlabel('$\\alpha$', fontsize=16)
+    pyplot.savefig('%d.png' % time.time())
+    return
+
+
 
 if __name__ =='__main__':
     gen_text()
