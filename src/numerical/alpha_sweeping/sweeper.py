@@ -15,6 +15,7 @@ def gen_text():
     equilibria = []
     running = True
     monitor = 10.
+    magnets.state *= 0.
     magnets.alpha = 0.
     while running:
         magnets.advance_in_time()
@@ -29,6 +30,10 @@ def gen_text():
                 # print(magnets.state[7:])
                 print('\n')
             continue
+        print('done at %f' % magnets.elapsed)
+        print(magnets.total_delta_sqr(), magnets.total_PE())
+        print(magnets.state[:7])
+        print('\n')
         equilibria.append([magnets.alpha,tuple(magnets.state[:7])])
         # if magnets.alpha < 1.:
         magnets.alpha+=.05
@@ -41,7 +46,7 @@ def gen_text():
         monitor = 10
         if magnets.alpha > 3.01:
             running = False
-    plotter(equilibria)
+    # plotter(equilibria)
 
 def plotter(equilibs):
     gam_0 = equilibs[0][1]

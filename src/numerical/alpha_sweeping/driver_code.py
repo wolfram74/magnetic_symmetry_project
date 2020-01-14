@@ -32,12 +32,14 @@ def debugging1():
 
 def central_bug():
     magnets = system.System()
-    magnets.alpha = .5
+    magnets.alpha = 0.
+    magnets.state*=0.
     PE0 = magnets.total_PE()
     print(PE0)
     for i in range(7):
-        magnets.state[i]+= .01
+        # magnets.state[i]+= .01
+        magnets.alpha += 0.2
         print(magnets.total_PE()-PE0)
-        magnets.state[i]-= .01
+        # magnets.state[i]-= .01
 
 central_bug()
