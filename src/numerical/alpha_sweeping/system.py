@@ -77,9 +77,7 @@ class System():
             delta[i+7] = -self.gamma*state[i+7]
             delta[i] = state[i+7]
             return delta
-        strength = 1
-        if 0 in (i,j):
-            strength = self.alpha
+        strength = self.dipole_strength(i)*self.dipole_strength(j)
         t1 = sin(state[i] - state[j])
         t2 = 3.*sin(state[i]+state[j]-2*self.theta_vals[i][j])
         r3 = self.r_vals[i][j]**(-3)
@@ -91,10 +89,7 @@ class System():
     def PE_ij(self, i,j):
         if i==j:
             return 0.
-        strength = 1
-        if 0 in (i,j):
-            strength = self.alpha
-        # print(strength)
+        strength = self.dipole_strength(i)*self.dipole_strength(j)
         t1 = cos(self.state[i] - self.state[j])
         t2 = 3.*cos(self.state[i]+self.state[j]-2*self.theta_vals[i][j])
         r3 = self.r_vals[i][j]**(-3)
