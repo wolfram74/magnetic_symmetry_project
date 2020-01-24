@@ -238,3 +238,11 @@ class System():
         direction[0] = cos(self.state[i])
         direction[1] = sin(self.state[i])
         return self.dipole_strength(i)*direction
+
+    def lim_U(self):
+        limit = -13.8440856265381*self.alpha
+        return self.total_PE()/limit
+
+    def lim_moment(self):
+        limit = self.alpha + 1.24407105398155
+        return self.net_dipole_mag()/limit

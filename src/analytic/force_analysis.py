@@ -6,7 +6,7 @@ import random
 pi = sympy.pi
 cos = sympy.cos
 sin = sympy.sin
-
+import alpha_limit
 
 
 def parse_U_bin():
@@ -15,11 +15,12 @@ def parse_U_bin():
 
 def gen_phi_vals(symbols):
     # soln4 =(-0.523598754451836, -0.4168911504489822, 5.75958670639739, 5.65287959564158, 5.86629439213736, 5.75958670690163, 5.65287934383298)
-    soln46 =(-1.0471995875119704, 1.3883732553930772, 2.800418279335934, 4.062942061270801, 5.002593536119035, 5.469380345912305, 0.12584843604020696)
+    # soln46 =(-1.0471995875119704, 1.3883732553930772, 2.800418279335934, 4.062942061270801, 5.002593536119035, 5.469380345912305, 0.12584843604020696)
     # soln46 =(1.047185375472269, 1.280586331557914, 2.220244342353899, 3.482771775423115, 4.894816587679744, 6.15733787379985, 7.09698436863931)
+    limit_soln = alpha_limit.limit_phis()
     outputs = []
     for i in range(len(symbols)):
-        outputs.append((symbols[i], soln46[i]))
+        outputs.append((symbols[i], limit_soln[i]))
     print(outputs)
     return outputs
 
@@ -90,9 +91,24 @@ def cart_force_equations():
     sympy.pprint(lam0_solnx)
     sympy.pprint(lam0_solny)
 
+def limit_U():
+    phis = phi_gen()
+    gamma = sympy.symbols('gamma') #mu0*mu1*mu2/8pi
+    total_U = parse_U_bin()
+    phi_vals = gen_phi_vals(phis)
+    limit_U = total_U.subs(phi_vals)
+    sympy.pprint(limit_U)
+    sympy.pprint(limit_U.evalf())
+    sympy.pprint(limit_U.simplify())
+    sympy.pprint(limit_U.simplify().simplify())
+    sympy.pprint(limit_U.simplify().expand())
+    sympy.pprint(limit_U.simplify().expand().simplify())
+    # compare with -13.5297005383793⋅γ for all x-oriented
+
 
 if __name__=='__main__':
     # bulk_evals()
-    force_equations()
+    # force_equations()
     # cart_force_equations()
     # U_eval()
+    limit_U()

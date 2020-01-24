@@ -21,33 +21,34 @@ def gen_text(start_state):
         if magnets.total_delta_sqr()>1*10**-8 or magnets.elapsed<10.:
             if magnets.elapsed > monitor:
                 monitor+=10
-                print('monitor at', magnets.elapsed)
-                print(magnets.gamma, magnets.step_size, magnets.total_delta_sqr())
+                print('monitor at', magnets.elapsed, magnets.alpha)
+                # print(magnets.gamma, magnets.step_size, magnets.total_delta_sqr())
                 # print(magnets.state[:7])
                 # print(magnets.state[7:])
                 print('\n')
             continue
-        print('done at %f' % magnets.elapsed)
-        print(magnets.total_delta_sqr(), magnets.total_PE())
-        print(magnets.state[:7])
-        print('\n')
+        # print('done at %f' % magnets.elapsed)
+        # print(magnets.total_delta_sqr(), magnets.total_PE())
+        # print(magnets.state[:7])
+        # print('\n')
         equilibria.append(
             [magnets.alpha,
             tuple(magnets.state[:7]),
-            magnets.net_dipole_mag(), magnets.total_PE()]
+            magnets.lim_moment(), magnets.lim_U()]
             )
-        # if magnets.alpha < 1.:
-        magnets.alpha+=.05
-        # else:
-        #         magnets.alpha *= 1.075
-        print(magnets.alpha)
+        if magnets.alpha < 2.6:
+            magnets.alpha+=.05
+        else:
+            magnets.alpha *= 1.075
+        # print(magnets.alpha)
         # print(magnets.total_force())
         magnets.elapsed = 0.
         magnets.gamma = 0.
         monitor = 10
-        if magnets.alpha > 3.01:
+        if magnets.alpha > 10.51:
             running = False
-    angle_plotter(equilibria)
+    # angle_plotter(equilibria)
+    print(magnets.lim_moment(), magnets.lim_U())
     state_plotter(equilibria)
 
 def angle_plotter(equilibs):
@@ -67,10 +68,13 @@ def angle_plotter(equilibs):
 def state_plotter(equilibs):
     figure, subplots = pyplot.subplots(2,1)
     alpha = [el[0] for el in equilibs]
+    ax2 = pyplot.subplot(212)
+    ax2.set_ylim([0,5])
+    ax2.set_xlim([0,alpha[-1]])
     mu = [el[2] for el in equilibs]
     PE = [el[3] for el in equilibs]
     subplots[0].plot(alpha, mu, label='mu')
-    subplots[1].plot(alpha, PE, label='PE')
+    ax2.plot(alpha, PE, label='PE/lim_U')
     pyplot.legend()
     pyplot.xlabel('$\\alpha$', fontsize=16)
     pyplot.savefig('%d-s.png' % time.time())
