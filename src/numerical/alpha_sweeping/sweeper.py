@@ -4,19 +4,16 @@ import time
 
 from numpy import pi
 
-def gen_text():
+def gen_text(start_state):
     magnets = system.System()
-    # print('initial state')
-    # print(magnets.state)
-    # print(magnets.total_force())
-    # print(magnets.total_KE())
-    # print(magnets.total_delta_sqr())
-    # print('\n')
     equilibria = []
     running = True
+    # running = False
     monitor = 10.
     magnets.state *= 0.
     magnets.alpha = 0.
+    magnets.state[:7] = start_state
+    print(magnets.state)
     while running:
         magnets.advance_in_time()
         if magnets.elapsed >5.:
@@ -50,7 +47,7 @@ def gen_text():
         monitor = 10
         if magnets.alpha > 3.01:
             running = False
-    # angle_plotter(equilibria)
+    angle_plotter(equilibria)
     state_plotter(equilibria)
 
 def angle_plotter(equilibs):
@@ -64,7 +61,7 @@ def angle_plotter(equilibs):
         subplots[1].plot(alpha, del_phi_i, label='%d' %ind)
     pyplot.legend()
     pyplot.xlabel('$\\alpha$', fontsize=16)
-    pyplot.savefig('%d.png' % time.time())
+    pyplot.savefig('%d-ang.png' % time.time())
     return
 
 def state_plotter(equilibs):
@@ -76,10 +73,15 @@ def state_plotter(equilibs):
     subplots[1].plot(alpha, PE, label='PE')
     pyplot.legend()
     pyplot.xlabel('$\\alpha$', fontsize=16)
-    pyplot.savefig('%d.png' % time.time())
+    pyplot.savefig('%d-s.png' % time.time())
     return
 
 
 
 if __name__ =='__main__':
-    gen_text()
+    # circular = [0] + [(i-1)*pi/3.+pi/2 for i in range(1,7)]
+    # print(circular)
+    # gen_text(circular)
+    anti_radial = [0] + [(i-1)*pi/3.+pi*(1-i%2) for i in range(1,7)]
+    print(anti_radial)
+    gen_text(anti_radial)
