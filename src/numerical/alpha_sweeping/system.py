@@ -246,3 +246,12 @@ class System():
     def lim_moment(self):
         limit = self.alpha + 1.24407105398155
         return self.net_dipole_mag()/limit
+
+    def load_state(self, desired_alpha):
+        '''
+        checks if stored_states.txt exists
+        lines are formatted alpha, phi_0, ..., phi_6
+        looks for largest alpha lower than desired
+        sets alpha and phi's to those values
+        '''
+        pass
