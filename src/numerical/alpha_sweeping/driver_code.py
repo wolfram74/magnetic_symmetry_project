@@ -42,4 +42,20 @@ def central_bug():
         print(magnets.total_PE()-PE0)
         # magnets.state[i]-= .01
 
-central_bug()
+def debugging_2():
+    magnets = system.System()
+    magnets.load_state(.4)
+    PE0 = magnets.total_PE()
+    print(magnets.alpha)
+    print(magnets.state[:7])
+    print(PE0)
+    magnets.gamma = 1.3
+    for i in range(10):
+        magnets.advance_in_time()
+    print(magnets.state[:7])
+    print(magnets.total_PE()-PE0)
+
+    return
+
+# central_bug()
+debugging_2()

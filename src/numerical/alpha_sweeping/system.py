@@ -254,4 +254,25 @@ class System():
         looks for largest alpha lower than desired
         sets alpha and phi's to those values
         '''
-        pass
+        if desired_alpha==0:
+            self.set_init_state()
+            return
+        try:
+            saves = open('stored_states.txt', 'r')
+            last_alpha = 0.
+            last_state = None
+            for line in saves:
+                txt_list = line.split(',')
+                txt_list.pop()
+                num_list = [float(el) for el in txt_list]
+                if num_list[0]>desired_alpha:
+                    self.alpha = last_alpha
+                    self.state = last_state
+                    return
+                last_alpha = num_list[0]
+                # print(num_list[1:])
+                last_state = numpy.concatenate((numpy.array(num_list[1:]),numpy.zeros(7)))
+        except:
+            print('failed to load saved state, alpha unchanged. Please run sweeper.py')
+            return
+        return
