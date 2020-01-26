@@ -13,6 +13,7 @@ def gen_text(start_state):
     magnets.state *= 0.
     magnets.alpha = 0.
     magnets.state[:7] = start_state
+    forward = True
     print(magnets.state)
     while running:
         magnets.advance_in_time()
@@ -31,24 +32,34 @@ def gen_text(start_state):
         # print(magnets.total_delta_sqr(), magnets.total_PE())
         # print(magnets.state[:7])
         # print('\n')
-        equilibria.append(
-            [magnets.alpha,
-            tuple(magnets.state[:7]),
-            magnets.lim_moment(), magnets.lim_U()]
-            )
-        if magnets.alpha < 2.6:
-            magnets.alpha+=.05
+        if magnets.alpha >= 2.46:
+            equilibria.append(
+                [magnets.alpha,
+                tuple(magnets.state[:7]),
+                magnets.lim_moment(), magnets.lim_U()
+                # magnets.net_dipole_mag(), magnets.total_PE()
+                ]
+                )
+        if magnets.alpha < 2.459:
+            magnets.alpha += .01
         else:
-            magnets.alpha *= 1.075
+            magnets.alpha += .0001
+        # if forward:
+        #     magnets.alpha+=.05
+        # else:
+        #     magnets.alpha-=.05
         # print(magnets.alpha)
         # print(magnets.total_force())
         magnets.elapsed = 0.
         magnets.gamma = 0.
         monitor = 10
-        if magnets.alpha > 10.51:
+        if magnets.alpha >= 2.48:
+            # forward = False
+            running = False
+        if not forward and magnets.alpha <.1:
             running = False
     # angle_plotter(equilibria)
-    print(magnets.lim_moment(), magnets.lim_U())
+    # print(magnets.lim_moment(), magnets.lim_U())
     state_plotter(equilibria)
 
 def angle_plotter(equilibs):
@@ -69,12 +80,14 @@ def state_plotter(equilibs):
     figure, subplots = pyplot.subplots(2,1)
     alpha = [el[0] for el in equilibs]
     ax2 = pyplot.subplot(212)
-    ax2.set_ylim([0,5])
-    ax2.set_xlim([0,alpha[-1]])
+    ax2.set_ylim([.9,1.4])
+    ax2.set_xlim([alpha[0],alpha[-1]])
     mu = [el[2] for el in equilibs]
     PE = [el[3] for el in equilibs]
+    print(len(mu))
     subplots[0].plot(alpha, mu, label='mu')
     ax2.plot(alpha, PE, label='PE/lim_U')
+    # ax2.plot(alpha, PE, label='PE')
     pyplot.legend()
     pyplot.xlabel('$\\alpha$', fontsize=16)
     pyplot.savefig('%d-s.png' % time.time())

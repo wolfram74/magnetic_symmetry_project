@@ -104,6 +104,7 @@ def limit_U():
     sympy.pprint(limit_U.simplify().expand())
     sympy.pprint(limit_U.simplify().expand().simplify())
     # compare with -13.5297005383793⋅γ for all x-oriented
+    #simulation suggests -18.16357*alpha, but agrees with dipole moment thoroughly
 
 
 if __name__=='__main__':
