@@ -32,7 +32,7 @@ def gen_text(start_state):
         # print(magnets.total_delta_sqr(), magnets.total_PE())
         # print(magnets.state[:7])
         # print('\n')
-        if magnets.alpha >= 2.46:
+        if magnets.alpha >= 0:
             equilibria.append(
                 [magnets.alpha,
                 tuple(magnets.state[:7]),
@@ -40,12 +40,12 @@ def gen_text(start_state):
                 # magnets.net_dipole_mag(), magnets.total_PE()
                 ]
                 )
-        if magnets.alpha < 2.459:
-            magnets.alpha += .01
-        else:
-            magnets.alpha += .0001
+        # if magnets.alpha < 2.459:
+        #     magnets.alpha += .01
+        # else:
+        #     magnets.alpha += .0001
         # if forward:
-        #     magnets.alpha+=.05
+        magnets.alpha+=.05
         # else:
         #     magnets.alpha-=.05
         # print(magnets.alpha)
@@ -53,14 +53,14 @@ def gen_text(start_state):
         magnets.elapsed = 0.
         magnets.gamma = 0.
         monitor = 10
-        if magnets.alpha >= 2.48:
+        if magnets.alpha >= 2.8:
             # forward = False
             running = False
-        if not forward and magnets.alpha <.1:
-            running = False
-    # angle_plotter(equilibria)
+        # if not forward and magnets.alpha <.1:
+        #     running = False
+    angle_plotter(equilibria)
     # print(magnets.lim_moment(), magnets.lim_U())
-    state_plotter(equilibria)
+    # state_plotter(equilibria)
 
 def angle_plot_from_txt():
     state_data = open('stored_states.txt', 'r')
