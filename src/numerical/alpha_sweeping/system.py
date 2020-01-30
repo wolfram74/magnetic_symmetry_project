@@ -37,7 +37,7 @@ class System():
         self.delta_4 = numpy.zeros(2*7)
         self.delta_5 = numpy.zeros(2*7)
         self.step_size = 2**-6
-        self.tolerance = 2**-20 #2**-10 ~= 1E-3
+        self.tolerance = 2**-25 #2**-10 ~= 1E-3
         self.elapsed=0
         # self.torques = [[0 for i in range(7)] for j in range(7)]
         self.calc_geometry()
