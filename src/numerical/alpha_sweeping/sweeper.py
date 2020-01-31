@@ -23,30 +23,9 @@ def gen_states(magnets):
     equilibria = []
     first_step = True
     while running:
-        magnets.advance_in_time()
-        if first_step:
-            print(magnets.elapsed, magnets.alpha)
-            first_step = False
-
-        if magnets.elapsed > 2.:
-            magnets.gamma = 2*(magnets.alpha+1)*(magnets.elapsed-2.)/magnets.elapsed
-
-        if magnets.total_delta_sqr() > 10**-8 or magnets.elapsed<5.:
-            if magnets.elapsed > monitor:
-                monitor+=10
-                # print('monitor at', magnets.elapsed, magnets.alpha)
-                # print('delta sqr %f' % magnets.total_delta_sqr())
-                # print('\n')
-            continue
-        magnets.elapsed = 0.
-        magnets.gamma = 0.
-        # print('state', magnets.state[:7])
-        # print('PE', magnets.total_PE())
+        magnets.shift_alpha_and_stablize(0.01)
         entry = [magnets.alpha]+list(magnets.state[:7])
         equilibria.append(tuple(entry))
-        monitor = 10
-        magnets.alpha+=.01
-        first_step = True
         if magnets.alpha >= 4.:
             running = False
     return equilibria

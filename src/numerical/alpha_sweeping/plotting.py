@@ -113,23 +113,24 @@ def dipole_components_plot():
         magnets.net_dipole_mag()
         )]
     target = 0.
-    while magnets.alpha < 1.0:
-        # target+= .01
-        magnets.shift_alpha_and_stablize(0.01)
+    while magnets.alpha < 3.0:
+        target+= .01
+        magnets.load_state(target)
+        # magnets.shift_alpha_and_stablize(0.01)
         print(magnets.alpha)
         dipoles.append((
             magnets.alpha,
             magnets.net_dipole_moment(),
             magnets.net_dipole_mag()
         ))
-    # while magnets.alpha > .5:
-    #     magnets.shift_alpha_and_stablize(-0.01)
-    #     print(magnets.alpha)
-    #     dipoles.append((
-    #         magnets.alpha,
-    #         magnets.net_dipole_moment(),
-    #         magnets.net_dipole_mag()
-    #     ))
+    while magnets.alpha > .5:
+        magnets.shift_alpha_and_stablize(-0.01)
+        print(magnets.alpha)
+        dipoles.append((
+            magnets.alpha,
+            magnets.net_dipole_moment(),
+            magnets.net_dipole_mag()
+        ))
 
     alphas = [el[0] for el in dipoles]
     mu_x = [el[1][0] for el in dipoles]
