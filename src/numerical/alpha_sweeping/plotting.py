@@ -104,6 +104,43 @@ def state_plotter(equilibs):
     pyplot.savefig('%d-s.png' % time.time())
     return
 
+def dipole_components_plot():
+    figure, subplots = pyplot.subplots(3,1)
+    magnets = system.System()
+    dipoles = [(
+        magnets.alpha,
+        magnets.net_dipole_moment(),
+        magnets.net_dipole_mag()
+        )]
+    target = 0.
+    while magnets.alpha < 1.0:
+        # target+= .01
+        magnets.shift_alpha_and_stablize(0.01)
+        print(magnets.alpha)
+        dipoles.append((
+            magnets.alpha,
+            magnets.net_dipole_moment(),
+            magnets.net_dipole_mag()
+        ))
+    # while magnets.alpha > .5:
+    #     magnets.shift_alpha_and_stablize(-0.01)
+    #     print(magnets.alpha)
+    #     dipoles.append((
+    #         magnets.alpha,
+    #         magnets.net_dipole_moment(),
+    #         magnets.net_dipole_mag()
+    #     ))
+
+    alphas = [el[0] for el in dipoles]
+    mu_x = [el[1][0] for el in dipoles]
+    mu_y = [el[1][1] for el in dipoles]
+    mu = [el[2] for el in dipoles]
+    subplots[0].plot(alphas, mu_x, label='x')
+    subplots[1].plot(alphas, mu_y, label='y')
+    subplots[2].plot(alphas, mu, label='mag')
+    pyplot.savefig('%d-mu.png' % time.time())
+
+    return
 
 
 if __name__ =='__main__':
@@ -113,4 +150,5 @@ if __name__ =='__main__':
     # anti_radial = [0] + [(i-1)*pi/3.+pi*(1-i%2) for i in range(1,7)]
     # print(anti_radial)
     # gen_text(anti_radial)
-    angle_plot_from_txt()
+    # angle_plot_from_txt()
+    dipole_components_plot()

@@ -31,13 +31,13 @@ class System():
         self.alpha = 0.
         self.gamma = 0.
         self.state = numpy.zeros(7*2)
-        self.state[0]+=pi/120
+        # self.state[0]+=pi/120
         self.kernels = numpy.zeros((6,7*2))
         self.kernel_step = 0
         self.delta_4 = numpy.zeros(2*7)
         self.delta_5 = numpy.zeros(2*7)
         self.step_size = 2**-6
-        self.tolerance = 2**-25 #2**-10 ~= 1E-3
+        self.tolerance = 2**-30 #2**-10 ~= 1E-3
         self.elapsed=0
         # self.torques = [[0 for i in range(7)] for j in range(7)]
         self.calc_geometry()
@@ -272,7 +272,28 @@ class System():
                 last_alpha = num_list[0]
                 # print(num_list[1:])
                 last_state = numpy.concatenate((numpy.array(num_list[1:]),numpy.zeros(7)))
+            saves.close()
         except:
             print('failed to load saved state, alpha unchanged. Please run sweeper.py')
             return
+        return
+
+    def shift_alpha_and_stablize(self, del_alpha):
+        T0 = self.elapsed
+        T_damp = 2.
+        running = True
+        self.alpha += del_alpha
+        self.gamma = 0.
+        while running:
+            self.advance_in_time()
+            del_T = self.elapsed-T0
+            if del_T > T_damp:
+                scale = (del_T-T_damp)/del_T
+                self.gamma = 2.*(self.alpha+1)*scale
+            force_crit = self.total_delta_sqr() < 10**-8
+            time_crit = del_T > 5.
+            if not force_crit or not time_crit:
+                continue
+            running = False
+        print(del_T,)
         return

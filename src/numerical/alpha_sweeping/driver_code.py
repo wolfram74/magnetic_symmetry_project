@@ -57,5 +57,17 @@ def debugging_2():
 
     return
 
+def debugging_3():
+    magnets = system.System()
+    magnets.load_state(2.46)
+    mu0 = magnets.net_dipole_mag()
+    print(magnets.net_dipole_moment())
+    for i in range(3):
+        magnets.shift_alpha_and_stablize(0.02)
+        mu1 = magnets.net_dipole_mag()
+        print(mu0, mu1)
+        print(magnets.net_dipole_moment())
+
 # central_bug()
-debugging_2()
+# debugging_2()
+debugging_3()
