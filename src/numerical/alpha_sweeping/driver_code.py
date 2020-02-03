@@ -1,4 +1,5 @@
 import system
+import numpy
 
 def debugging1():
     magnets = system.System()
@@ -68,6 +69,13 @@ def debugging_3():
         print(mu0, mu1)
         print(magnets.net_dipole_moment())
 
+def debugging_4():
+    # derivatives
+    step_sizes = numpy.array([.8**num for num in range(10)])
+    for step in step_sizes:
+        print('h = %f' % step)
+
 # central_bug()
 # debugging_2()
-debugging_3()
+# debugging_3()
+debugging_4()

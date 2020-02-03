@@ -37,10 +37,10 @@ def plot_path(path, alpha):
     pyplot.savefig('%d-alph_%s.png' % (time.time(), alpha))
 
 def small_amp_alph_sweep():
-    alph = 2.3
+    alph = .88
     del_state = shift_outers(magnets.state, 10.**-3)
     for i in range(1):
-        alph += .1
+        alph += .01
         path = oscilation_path(alph, del_state)
         plot_path(path, alph)
         pyplot.clf()

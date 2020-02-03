@@ -297,3 +297,24 @@ class System():
             running = False
         print(del_T,)
         return
+
+
+    def central_diff(self, ind, j, step):
+        '''
+        from rubin's comp physics, eq:5.7
+        '''
+        self.state[j]+=step/2.
+        forward = self.total_force()
+        self.state[j]-=step
+        backward = self.total_force()
+        self.state[j]+=step/2.
+        return (forward[ind+7]-back[ind+7])/step
+
+    def extended_diff(self, ind, j, step):
+        '''
+        from rubin's comp physics, eq:5.11
+        '''
+        half = self.central_diff(j, step/2.)
+        full = self.central_diff(j, step)
+        return (4.*half-full)/3.
+
