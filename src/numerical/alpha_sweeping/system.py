@@ -31,6 +31,7 @@ class System():
         self.alpha = 0.
         self.gamma = 0.
         self.state = numpy.zeros(7*2)
+        self.L_mat = numpy.zeros((7,7))
         # self.state[0]+=pi/120
         self.kernels = numpy.zeros((6,7*2))
         self.kernel_step = 0
@@ -298,7 +299,6 @@ class System():
         print(del_T,)
         return
 
-
     def central_diff(self, ind, j, step):
         '''
         from rubin's comp physics, eq:5.7
@@ -308,13 +308,19 @@ class System():
         self.state[j]-=step
         backward = self.total_force()
         self.state[j]+=step/2.
-        return (forward[ind+7]-back[ind+7])/step
+        return (forward[ind+7]-backward[ind+7])/step
 
     def extended_diff(self, ind, j, step):
         '''
         from rubin's comp physics, eq:5.11
+        https://en.wikipedia.org/wiki/Richardson_extrapolation
         '''
-        half = self.central_diff(j, step/2.)
-        full = self.central_diff(j, step)
+        half = self.central_diff(ind, j, step/2.)
+        full = self.central_diff(ind, j, step)
         return (4.*half-full)/3.
+
+    def calc_L_mat(self, step):
+        for i in range(7):
+            for j in range(7):
+                self.L_mat[i][j] = self.extended_diff(i, j, step)
 

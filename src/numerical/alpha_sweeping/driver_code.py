@@ -71,11 +71,71 @@ def debugging_3():
 
 def debugging_4():
     # derivatives
-    step_sizes = numpy.array([.8**num for num in range(10)])
+    magnets = system.System()
+    magnets.load_state(.5)
+    step_sizes = numpy.array([.7**num for num in range(10)])
     for step in step_sizes:
         print('h = %f' % step)
+        total = 0.
+        for i in range(7):
+            for j in range(7):
+                DE = magnets.extended_diff(i, j, step)
+                DC = magnets.central_diff(i, j, step)
+                delt = abs(DE-DC)
+                avg = (DE+DC)/2
+                total += abs(delt/avg)
+                # total += DE/DC
+                if DE*DC<0.:
+                    print('sign mismatch')
+                # print(DE,DC)
+        print(total/49.)
+        # print(total/48.)
+        print()
+
+def debugging_5():
+    magnets = system.System()
+    magnets.load_state(.5)
+    step_sizes = numpy.array([.1**num for num in range(4)])
+    last = False
+    biggest_shift = 0.
+    for step in step_sizes:
+        print(step)
+        magnets.calc_L_mat(step)
+        # print(last)
+        if not last:
+            last = tuple([tuple(el) for el in magnets.L_mat])
+            continue
+        for i in range(7):
+            for j in range(7):
+                delt = last[i][j]-magnets.L_mat[i][j]
+                if delt > biggest_shift:
+                    biggest_shift = delt
+        print(biggest_shift)
+        biggest_shift = 0.
+        print(last[0][0], magnets.L_mat[0][0])
+        last = tuple([tuple(el) for el in magnets.L_mat])
+
+def debugging_6():
+    magnets = system.System()
+    # magnets.load_state(.5)
+    magnets.calc_L_mat(.01)
+    template = " %.3f :"*7
+    print('state')
+    print(template % tuple(magnets.state[:7]))
+    print('')
+    for line in magnets.L_mat:
+        print(template % tuple(line))
+    eig_stuff = numpy.linalg.eig(magnets.L_mat)
+    for ind in range(len(eig_stuff[0])):
+        print(eig_stuff[0][ind])
+        print(template % tuple(eig_stuff[1][ind]))
+        print()
+
+
 
 # central_bug()
 # debugging_2()
 # debugging_3()
-debugging_4()
+# debugging_4()
+# debugging_5()
+debugging_6()
