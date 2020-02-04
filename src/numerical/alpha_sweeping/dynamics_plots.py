@@ -53,8 +53,25 @@ def large_amp_alpha_sweep():
         plot_path(path, alph)
         pyplot.clf()
 
+def eig_plots():
+    magnets.load_state(.5)
+    magnets.calc_L_mat(.01)
+    eig_vecs = numpy.linalg.eig(magnets.L_mat)[1]
+    for ind in range(len(eig_vecs)):
+        delt = numpy.zeros(2*7)
+        vec = .01*eig_vecs[:,ind]
+        delt[:7] = vec
+        print(ind)
+        print(delt[:7])
+        # print(delt[7:])
+        # continue
+        path = oscilation_path(.5, delt)
+        plot_path(path, 0)
+        pyplot.clf()
+
 
 
 if __name__=='__main__':
     # large_amp_alpha_sweep()
-    small_amp_alph_sweep()
+    # small_amp_alph_sweep()
+    eig_plots()

@@ -97,6 +97,7 @@ class System():
         return -strength*r3*(t1+t2)/2.
 
     def set_init_state(self):
+        self.state*=0
         for i in range(1,7):
             self.state[i]=pi/2+2*pi*(i-1)/6
         return
@@ -255,7 +256,7 @@ class System():
         looks for largest alpha lower than desired
         sets alpha and phi's to those values
         '''
-        if desired_alpha==0:
+        if float(desired_alpha)==0.:
             self.set_init_state()
             return
         try:

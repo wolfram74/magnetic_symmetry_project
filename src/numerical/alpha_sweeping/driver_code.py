@@ -128,7 +128,7 @@ def debugging_6():
     eig_stuff = numpy.linalg.eig(magnets.L_mat)
     for ind in range(len(eig_stuff[0])):
         print(eig_stuff[0][ind])
-        print(template % tuple(eig_stuff[1][ind]))
+        print(template % tuple(eig_stuff[1][:,ind]))
         print()
 
 
