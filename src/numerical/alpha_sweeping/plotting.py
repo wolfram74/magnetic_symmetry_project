@@ -143,6 +143,115 @@ def dipole_components_plot():
 
     return
 
+def eigen_value_plots():
+    magnets = system.System()
+    magnets.load_state(2.47)
+    vals = [el[0] for el in magnets.spectrum_finder()]
+    eigen_vals = [(magnets.alpha, sorted(vals))]
+    print(eigen_vals[0])
+    while magnets.alpha < 2.477:
+        magnets.shift_alpha_and_stablize(.00001)
+        vals = [el[0] for el in magnets.spectrum_finder()]
+        eigen_vals.append( (magnets.alpha, sorted(vals)) )
+    alphas = [el[0] for el in eigen_vals]
+    # print(eigen_vals[-1])
+    # print(alphas[:5])
+    # print(alphas[-5:])
+    figure, subplots = pyplot.subplots(1,1)
+    figure.set_figheight(6)
+    figure.set_figwidth(12)
+    subplots.set_ylim((-.1,6.))
+    for i in range(7):
+        eigs = [el[1][i] for el in eigen_vals]
+        subplots.plot(alphas, eigs)
+    pyplot.savefig('%d-eigs.png' % time.time())
+
+def vector_drift():
+    def magnitude(vec, i):
+        return sum([vec[ind]*alpha_0[i][ind] for ind in range(7)])
+    def massage(drift_vals):
+        output = [drift_vals[0]]
+        for i in range(len(drift_vals)-2):
+            ind = i+1
+            left_bad = drift_vals[ind]*drift_vals[0] < 0.
+
+            if left_bad:
+                output.append(drift_vals[ind]*-1.)
+                continue
+            output.append(drift_vals[ind])
+        output.append(drift_vals[-1])
+        return output
+    magnets = system.System()
+    # magnets.load_state(.4)
+    vals = magnets.spectrum_finder()
+    vals = sorted(vals, key=lambda el : el[0])
+    alpha_0 = [el[1] for el in vals]
+    eigen_drifts = [[] for el in range(7)]
+    print(eigen_drifts)
+    figure, subplots = pyplot.subplots(7,1)
+    figure.set_figheight(28)
+    figure.set_figwidth(12)
+    alphas = []
+    while magnets.alpha < 3.0:
+        magnets.load_state(magnets.alpha+.0101)
+        vals = magnets.spectrum_finder()
+        vals = sorted(vals, key=lambda el : el[0])
+        for ind in range(7):
+            eigen_drifts[ind].append(vals[ind][1])
+        alphas.append(magnets.alpha)
+        drifts = [magnitude(vals[i][1], i) for i in range(7)]
+        # drifts = vals[6][1]
+        # eigen_drifts.append( (magnets.alpha, drifts) )
+    # # print(eigen_drifts[-1])
+    # # print(alphas[:5])
+    # # print(alphas[-5:])
+    for j in range(7):
+        for i in range(7):
+            eigs = [el[i] for el in eigen_drifts[j]]
+            subplots[j].plot(alphas, eigs)
+    pyplot.savefig('%d-drift.png' % time.time())
+
+def alignment_drift():
+    def magnitude(vec, i):
+        return sum([vec[ind]*alpha_0[i][ind] for ind in range(7)])
+    def massage(drift_vals):
+        output = [drift_vals[0]]
+        for i in range(len(drift_vals)-2):
+            ind = i+1
+            left_bad = drift_vals[ind]*drift_vals[0] < 0.
+
+            if left_bad:
+                output.append(drift_vals[ind]*-1.)
+                continue
+            output.append(drift_vals[ind])
+        output.append(drift_vals[-1])
+        return output
+    magnets = system.System()
+    # magnets.load_state(.4)
+    vals = magnets.spectrum_finder()
+    vals = sorted(vals, key=lambda el : el[0])
+    alpha_0 = [el[1] for el in vals]
+    eigen_drifts = []
+    print(eigen_drifts)
+    figure, subplots = pyplot.subplots(1,1)
+    figure.set_figheight(4)
+    figure.set_figwidth(12)
+    alphas = []
+    while magnets.alpha < 3.0:
+        magnets.load_state(magnets.alpha+.0101)
+        vals = magnets.spectrum_finder()
+        vals = sorted(vals, key=lambda el : el[0])
+        eigen_drifts.append(
+            [magnitude(vals[ind][1], ind) for ind in range(7)]
+            )
+        alphas.append(magnets.alpha)
+    for i in range(7):
+        eigs = [el[i] for el in eigen_drifts]
+        # print(len(alphas), len(eigs))
+        subplots.plot(alphas, eigs)
+    pyplot.savefig('%d-drift-align.png' % time.time())
+
+
 
 if __name__ =='__main__':
     # circular = [0] + [(i-1)*pi/3.+pi/2 for i in range(1,7)]
@@ -152,4 +261,7 @@ if __name__ =='__main__':
     # print(anti_radial)
     # gen_text(anti_radial)
     # angle_plot_from_txt()
-    dipole_components_plot()
+    # dipole_components_plot()
+    eigen_value_plots()
+    # vector_drift()
+    # alignment_drift()

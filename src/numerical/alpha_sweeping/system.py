@@ -284,6 +284,7 @@ class System():
         T0 = self.elapsed
         T_damp = 2.
         running = True
+        old_alpha = self.alpha
         self.alpha += del_alpha
         self.gamma = 0.
         while running:
@@ -297,7 +298,9 @@ class System():
             if not force_crit or not time_crit:
                 continue
             running = False
-        print(del_T,)
+        if del_T>20.:
+            print("going from %f to %f took %f units" % (old_alpha, self.alpha, del_T))
+        # print(del_T,)
         return
 
     def central_diff(self, ind, j, step):
@@ -325,3 +328,18 @@ class System():
             for j in range(7):
                 self.L_mat[i][j] = self.extended_diff(i, j, step)
 
+    def spectrum_finder(self):
+        if self.total_delta_sqr()>10**-8:
+            print('%f calculated while delta^2 at %f' %(self.alpha, self.total_delta_sqr()))
+        self.calc_L_mat(.01)
+        eigs = numpy.linalg.eig(self.L_mat)
+        output = []
+        for ind in range(7):
+            output.append(
+                [-eigs[0][ind], eigs[1][:, ind]]
+                )
+        for ind in range(7):
+            if output[ind][1][2]<0:
+                flipped = numpy.array(output[ind][1])
+                output[ind][1]= tuple(-1*flipped)
+        return output

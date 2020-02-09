@@ -118,18 +118,33 @@ def debugging_5():
 def debugging_6():
     magnets = system.System()
     # magnets.load_state(.5)
+    U_0 = magnets.total_PE()
     magnets.calc_L_mat(.01)
+    # U_A = magnets.total_PE()
+    # print(U_A-U_0)
     template = " %.3f :"*7
     print('state')
     print(template % tuple(magnets.state[:7]))
     print('')
-    for line in magnets.L_mat:
-        print(template % tuple(line))
+    # for line in magnets.L_mat:
+    #     print(template % tuple(line))
     eig_stuff = numpy.linalg.eig(magnets.L_mat)
+    tidy_eigs = magnets.spectrum_finder()
     for ind in range(len(eig_stuff[0])):
-        print(eig_stuff[0][ind])
+        print(eig_stuff[0][ind], tidy_eigs[ind][0])
         print(template % tuple(eig_stuff[1][:,ind]))
+        print(template % tuple(tidy_eigs[ind][1]))
         print()
+    # U_A = magnets.total_PE()
+    # print(U_A-U_0)
+
+    tidy_eigs = magnets.spectrum_finder()
+    # for mode in tidy_eigs:
+    #     print(mode[0])
+    #     print(template % tuple(mode[1]))
+
+    # U_A = magnets.total_PE()
+    # print(U_A-U_0)
 
 
 
