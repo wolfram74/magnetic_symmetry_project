@@ -2,7 +2,9 @@ import system
 from matplotlib import pyplot
 import time
 
-from numpy import pi
+# from numpy import pi
+import numpy
+pi = numpy.pi
 
 def gen_text(start_state):
     magnets = system.System()
@@ -104,6 +106,41 @@ def state_plotter(equilibs):
     pyplot.savefig('%d-s.png' % time.time())
     return
 
+def down_slope_states():
+    magnets = system.System()
+    start = 1.1
+    end = 1.09
+    step = .00001
+    magnets.load_state(start, down=True)
+    print(magnets.state)
+    alpha = [magnets.alpha]
+    mux_vals = [magnets.net_dipole_moment()[0]]
+    U_vals = [magnets.total_PE()]
+    while magnets.alpha > end:
+        print(magnets.alpha)
+        if magnets.alpha-step <= 0.:
+            break
+        if magnets.alpha <= end:
+            break
+        if step >= .011:
+            magnets.load_state(magnets.alpha-.0101, down=True)
+        else:
+            magnets.shift_alpha_and_stablize(-step)
+        alpha.append(magnets.alpha)
+        mux_vals.append(magnets.net_dipole_moment()[0])
+        U_vals.append(magnets.total_PE())
+
+    figure, subplots = pyplot.subplots(2,1)
+    figure.set_figheight(8)
+    figure.set_figwidth(12)
+    subplots[0].plot(alpha,mux_vals, label='$\mu_x$')
+    subplots[0].legend()
+    subplots[1].plot(alpha,U_vals, label='$PE$')
+    subplots[1].legend()
+    pyplot.xlabel('$\\alpha$', fontsize=16)
+    pyplot.savefig('%d-states.png' % time.time())
+
+
 def dipole_components_plot():
     figure, subplots = pyplot.subplots(3,1)
     magnets = system.System()
@@ -145,25 +182,27 @@ def dipole_components_plot():
 
 def eigen_value_plots():
     magnets = system.System()
-    magnets.load_state(2.47)
+    magnets.load_state(1.2, down=True)
     vals = [el[0] for el in magnets.spectrum_finder()]
     eigen_vals = [(magnets.alpha, sorted(vals))]
     print(eigen_vals[0])
-    while magnets.alpha < 2.477:
-        magnets.shift_alpha_and_stablize(.00001)
+    while magnets.alpha > 1.05:
+        magnets.shift_alpha_and_stablize(-.0001)
         vals = [el[0] for el in magnets.spectrum_finder()]
         eigen_vals.append( (magnets.alpha, sorted(vals)) )
     alphas = [el[0] for el in eigen_vals]
+    # alphas = numpy.linspace(0, 2, 50)
     # print(eigen_vals[-1])
     # print(alphas[:5])
     # print(alphas[-5:])
     figure, subplots = pyplot.subplots(1,1)
     figure.set_figheight(6)
     figure.set_figwidth(12)
-    subplots.set_ylim((-.1,6.))
+    subplots.set_ylim((-.5,6.))
     for i in range(7):
         eigs = [el[1][i] for el in eigen_vals]
         subplots.plot(alphas, eigs)
+    subplots.plot(alphas, numpy.zeros(len(alphas)),linestyle='--')
     pyplot.savefig('%d-eigs.png' % time.time())
 
 def vector_drift():
@@ -265,3 +304,4 @@ if __name__ =='__main__':
     eigen_value_plots()
     # vector_drift()
     # alignment_drift()
+    # down_slope_states()

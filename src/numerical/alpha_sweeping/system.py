@@ -249,18 +249,22 @@ class System():
         limit = self.alpha + 1.24407105398155
         return self.net_dipole_mag()/limit
 
-    def load_state(self, desired_alpha):
+    def load_state(self, desired_alpha, down=False):
         '''
         checks if stored_states.txt exists
         lines are formatted alpha, phi_0, ..., phi_6
         looks for largest alpha lower than desired
         sets alpha and phi's to those values
+        alternative values available for .85 through 2.5
         '''
         if float(desired_alpha)==0.:
             self.set_init_state()
             return
         try:
-            saves = open('stored_states.txt', 'r')
+            if down and desired_alpha> .85 and desired_alpha <2.5:
+                saves = open('stored_states_down.txt', 'r')
+            else:
+                saves = open('stored_states.txt', 'r')
             last_alpha = 0.
             last_state = None
             for line in saves:
@@ -278,6 +282,7 @@ class System():
         except:
             print('failed to load saved state, alpha unchanged. Please run sweeper.py')
             return
+        self.shift_alpha_and_stablize(0.)
         return
 
     def shift_alpha_and_stablize(self, del_alpha):
@@ -330,7 +335,7 @@ class System():
 
     def spectrum_finder(self):
         if self.total_delta_sqr()>10**-8:
-            print('%f calculated while delta^2 at %f' %(self.alpha, self.total_delta_sqr()))
+            print('%f calculated while delta^2 at %fE-6' %(self.alpha, self.total_delta_sqr()*10**6))
         self.calc_L_mat(.01)
         eigs = numpy.linalg.eig(self.L_mat)
         output = []

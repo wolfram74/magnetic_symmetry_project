@@ -150,7 +150,7 @@ def debugging_6():
 
 # central_bug()
 # debugging_2()
-# debugging_3()
+debugging_3()
 # debugging_4()
 # debugging_5()
-debugging_6()
+# debugging_6()
