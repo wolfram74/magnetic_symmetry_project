@@ -1,0 +1,15 @@
+problem: the parity relations for different coordinates of a given mode vary too many times as alpha approaches the transition and making a consistent rule set through out is proving annoying as all get out
+
+observation/assumption: the values for the coordinates of each mode are presumed to be varying smoothly, and the parity relationships are stable up to alpha~=1, .5 to be safe.
+
+2nd observation: if vec_i(alpha) is maintained, a new vector, vec_k(alpha_0) could be compared against the 7*2 options for where it should be appended, 1 for each possible sign flip and each existing modes. the new vector in it's 2 directions would be compared against the 7 existing trails to try and minimize 1st and 2nd derivatives against all 7 coordinates
+
+proposed algorithm:
+	set up a data object that keeps a record of
+		it's ID (1-7)
+		it's w^2 as a function of alpha
+		it's eigen vector as a function of alpha
+			use dicts for this
+			after calculation, save results for each object in a text file lines formatted
+				alpha, w^2, dphi0,...,dphi6
+		it should have a function that when given a vector would calculate 1st and 2nd hypothetical derivatives when appended to the existing record of vectors
