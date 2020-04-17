@@ -395,7 +395,7 @@ class System():
     def mode_checker1467(self, vector):
         a01,a02,a05,a12,a15,a25 = self.sign_compare(vector)
         negatives = (a01,a02,a05,a12,a15,a25)
-        pre1 = self.alpha <1.0
+        pre1 = self.alpha <= 1.0
         pre1p8 = self.alpha < 1.8
         if a01 and a02 and not a05 and not a12 and a15 and a25:
             return 1
