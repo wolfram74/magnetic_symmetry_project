@@ -425,10 +425,13 @@ class System():
         if label in [1,6,7]:
             if vector[0]<0:
                 flip =True
-        if label in [3,4]:
+        if label == 3:
             #3 -> el2 >0
-            #4 -> el2 >0
             if vector[2]< 0:
+                flip =True
+        if label == 4:
+            #4 -> el1 <0
+            if vector[1] > 0:
                 flip =True
         if label == 2:
             #2 -> el5 >0
