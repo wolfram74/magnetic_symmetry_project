@@ -1,0 +1,48 @@
+w1=0
+	phi0 shrinks
+	pairs 1-4, 2-3, 5-6
+	signage
+		1-4, 2-3  on one side
+		5-6, 0 on other
+	fiat 0 is positive
+
+w2=sqrt(2.030)
+	phi0 stays flat=0
+	others 6 form equal+oppo pairs
+	1-4, 2,3, 5,6
+	fiat 5 is positve
+
+w3=sqrt(2.769)
+	phi0 stays flat = 0
+	equal-oppo
+		1-4, 2-3, 5-6
+	2-4 have same signs, 6 soon to change signs
+	fiat 2 is positive
+
+w4=sqrt(2.769)
+	0 stays small
+	equal pairs, 1-4, 2-3, 5-6
+	1-4 has opposite sign to 2-3, 5-6
+	fiat 2 is positive
+
+
+w5=sqrt(4.769)
+	equal-oppo pairs
+		1-4, 2-3, 5-6
+	0 is 0
+	fiat 1 is positive
+
+w6=sqrt(4.769)
+	equal pairs
+		1-4, 2-3, 5-6
+		1-4, 5-6 have same sign through out
+		opposite to 2-3 and 0, but eventually 2-3 goes to negative relative to 0
+		fiat 0 is positive
+
+w7=sqrt(7.53)
+	equal pairs
+		1-4, 2-3, 5-6
+	1-4, 2-3, and 0 have same sign for most of it,
+	fiat 0 is positive
+
+

@@ -146,11 +146,31 @@ def debugging_6():
     # U_A = magnets.total_PE()
     # print(U_A-U_0)
 
+def debugging_labeler():
+    magnets = system.System()
+    # magnets.load_state(1.96)
+    # modes = magnets.labeled_spectra()
+    # for mode_id in modes.keys():
+    #     print(mode_id)
+    #     print(modes[mode_id])
+    checks = [1.94+.01*i for i in range(10)]
+    for alph in checks:
+        print(alph)
+        magnets.load_state(alph)
+        modes = magnets.labeled_spectra()
+        # print(modes)
+        vec = modes[4][1]
+        neg4 = magnets.sign_compare(vec)
+        neg6 = magnets.sign_compare(modes[6][1])
+        print('4', neg4)
+        print('6', neg6[:3], neg6[3:])
+        print('')
 
 
 # central_bug()
 # debugging_2()
-debugging_3()
+# debugging_3()
 # debugging_4()
 # debugging_5()
 # debugging_6()
+debugging_labeler()

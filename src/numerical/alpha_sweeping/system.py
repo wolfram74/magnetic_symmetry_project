@@ -343,8 +343,111 @@ class System():
             output.append(
                 [-eigs[0][ind], eigs[1][:, ind]]
                 )
-        for ind in range(7):
-            if output[ind][1][2]<0:
-                flipped = numpy.array(output[ind][1])
-                output[ind][1]= tuple(-1*flipped)
+        # for ind in range(7):
+        #     if output[ind][1][2]<0:
+        #         flipped = numpy.array(output[ind][1])
+        #         output[ind][1]= tuple(-1*flipped)
         return output
+
+    def labeled_spectra(self):
+        spectra = self.spectrum_finder()
+        #spectra is list of w^2, vector pairs
+        labeled_vectors = {1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
+        for mode in spectra:
+            val = mode[0]
+            vec = mode[1]
+            # print(val)
+            p14 = vec[1]/vec[4]
+            p23 = vec[2]/vec[3]
+            p56 = vec[5]/vec[6]
+            if p14<0:
+                #mode 2,3 or 5
+                mode_id = self.mode_checker235(vec)
+                # print(mode_id)
+            #mode 1,4,6 or 7
+            else:
+                mode_id = self.mode_checker1467(vec)
+            if not labeled_vectors[mode_id] == []:
+                print('mislabeling')
+                print('ID %d' % mode_id)
+                print('old')
+                print(labeled_vectors[mode_id])
+                print(self.sign_compare(labeled_vectors[mode_id][1]))
+                print('candidate')
+                print(val,vec)
+                print(self.sign_compare(vec))
+            new_vec = self.consistent_direction(mode_id, vec)
+            labeled_vectors[mode_id].append(val)
+            labeled_vectors[mode_id].append(new_vec)
+        return labeled_vectors
+
+    def mode_checker235(self, vector):
+        #mode 2 has |p5|=|p6|>others
+        #mode 3 has |p2|=|p3|>others
+        #mode 5 has |p1|=|p4|>others
+        abs_vals = numpy.abs(vector)
+        if abs_vals[5]>abs_vals[2] and abs_vals[5]>abs_vals[1]:
+            return 2
+        if abs_vals[2]>abs_vals[1] and abs_vals[2]>abs_vals[5]:
+            return 3
+        return 5
+
+    def mode_checker1467(self, vector):
+        a01,a02,a05,a12,a15,a25 = self.sign_compare(vector)
+        negatives = (a01,a02,a05,a12,a15,a25)
+        pre1 = self.alpha <1.0
+        pre1p8 = self.alpha < 1.8
+        if a01 and a02 and not a05 and not a12 and a15 and a25:
+            return 1
+        if pre1:
+            if not any(negatives):
+                return 7
+        else:
+            if all((a05, a15, a25)) and not any((a01, a02, a12)):
+                return 7
+        if pre1:
+            if a01 and a05 and not a15:
+                return 6
+        else:
+            if all(negatives[:3]) and not any(negatives[3:]):
+                return 6
+        # if a12:
+        return 4
+
+
+    def consistent_direction(self, label, vector):
+        flipped = numpy.array(vector)
+        flip = False
+        new_vec = tuple(flipped)
+        if label in [1,6,7]:
+            if vector[0]<0:
+                flip =True
+        if label in [3,4]:
+            #3 -> el2 >0
+            #4 -> el2 >0
+            if vector[2]< 0:
+                flip =True
+        if label == 2:
+            #2 -> el5 >0
+            if vector[5] <0:
+                flip=True
+        if label == 5:
+            #5 -> el1 >0
+            if vector[1] <0:
+                flip=True
+        if flip:
+            new_vec = tuple(-1*flipped)
+        # print(label, new_vec)
+        return new_vec
+
+
+    def sign_compare(self, vector):
+        #a01, a02, a05, a12, a15, a25
+        a01 = vector[0]*vector[1]<0
+        a02 = vector[0]*vector[2]<0
+        a05 = vector[0]*vector[5]<0
+        a12 = vector[1]*vector[2]<0
+        a15 = vector[1]*vector[5]<0
+        a25 = vector[2]*vector[5]<0
+        negatives = (a01,a02,a05,a12,a15,a25)
+        return negatives
