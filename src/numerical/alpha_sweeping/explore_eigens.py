@@ -40,7 +40,7 @@ def eigen_vec_drift_plot():
     markers = [' ',' ',' ',' ', 'x', 'x', 'x']
     styles = ['-','--', '--','--', ' ',' ', ' ']
     colors = ['k','r', 'g', 'b', 'r', 'b','g']
-    a_max = 2.01
+    a_max = 2.3
     # order preserved until 1.8 I think
     while magnets.alpha <a_max:
         print(magnets.alpha)

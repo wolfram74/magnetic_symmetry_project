@@ -153,7 +153,7 @@ def debugging_labeler():
     # for mode_id in modes.keys():
     #     print(mode_id)
     #     print(modes[mode_id])
-    checks = [1.94+.01*i for i in range(10)]
+    checks = [2.02+.01*i for i in range(40)]
     for alph in checks:
         print(alph)
         magnets.load_state(alph)
@@ -163,7 +163,9 @@ def debugging_labeler():
         neg4 = magnets.sign_compare(vec)
         neg6 = magnets.sign_compare(modes[6][1])
         print('4', neg4)
+        print(vec)
         print('6', neg6[:3], neg6[3:])
+        print(modes[6][1])
         print('')
 
 

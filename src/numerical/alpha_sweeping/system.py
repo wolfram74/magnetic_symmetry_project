@@ -396,7 +396,7 @@ class System():
         a01,a02,a05,a12,a15,a25 = self.sign_compare(vector)
         negatives = (a01,a02,a05,a12,a15,a25)
         pre1 = self.alpha <= 1.0
-        pre1p8 = self.alpha < 1.8
+        pre2p01 = self.alpha <= 2.01
         if a01 and a02 and not a05 and not a12 and a15 and a25:
             return 1
         if pre1:
@@ -407,6 +407,9 @@ class System():
                 return 7
         if pre1:
             if a01 and a05 and not a15:
+                return 6
+        elif not pre2p01:
+            if all(negatives[1:5]) and not (a01 or a25):
                 return 6
         else:
             if all(negatives[:3]) and not any(negatives[3:]):
