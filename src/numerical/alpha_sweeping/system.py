@@ -351,15 +351,23 @@ class System():
 
     def labeled_spectra(self):
         spectra = self.spectrum_finder()
+        naive_sort = sorted(vals, key=lambda el : el[0])
         #spectra is list of w^2, vector pairs
         labeled_vectors = {1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
-        for mode in spectra:
+        for index in range(7):
+            mode = naive_sort[index]
             val = mode[0]
             vec = mode[1]
             # print(val)
             p14 = vec[1]/vec[4]
             p23 = vec[2]/vec[3]
             p56 = vec[5]/vec[6]
+            if index >2:
+                mode_id = index+1
+                new_vec = self.consistent_direction(mode_id, vec)
+                labeled_vectors[mode_id].append(val)
+                labeled_vectors[mode_id].append(new_vec)
+                continue
             if p14<0:
                 #mode 2,3 or 5
                 mode_id = self.mode_checker235(vec)
