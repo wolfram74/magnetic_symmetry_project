@@ -46,3 +46,28 @@ w7=sqrt(7.53)
 	fiat 0 is positive
 
 
+########## Mono magnet phase
+transition at alpha~=1.15
+problem modes
+1 and 2 swap around alpha ~1.3
+5 and 6 swap around alpha ~1.7
+naive assignment for 3,4, 7
+
+w1
+	p0!=0
+	opposite sign to other 6
+	other 6 tightly grouped at high alpha, hard to tell relations
+
+w2
+	p0 basically 0
+	oppo pairs 1-4
+	equal pairs 2-5, 3-6
+
+
+w4
+	p0 != 0
+	2,3,5,6 ~equal, oppo sign 1,4
+
+w5
+	p0,1,4=0
+	2,3 oppo 5,6

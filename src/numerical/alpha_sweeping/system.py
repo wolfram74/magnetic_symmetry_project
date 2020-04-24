@@ -24,6 +24,7 @@ sin = numpy.sin
 atan = numpy.arctan2
 pi = numpy.pi
 
+
 class System():
     def __init__(self):
         self.r_vals = numpy.zeros((7,7))
@@ -351,39 +352,23 @@ class System():
 
     def labeled_spectra(self):
         spectra = self.spectrum_finder()
-        naive_sort = sorted(vals, key=lambda el : el[0])
+        naive_sort = sorted(spectra, key=lambda el : el[0])
         #spectra is list of w^2, vector pairs
         labeled_vectors = {1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
         for index in range(7):
             mode = naive_sort[index]
             val = mode[0]
             vec = mode[1]
-            # print(val)
             p14 = vec[1]/vec[4]
             p23 = vec[2]/vec[3]
             p56 = vec[5]/vec[6]
             if index >2:
                 mode_id = index+1
-                new_vec = self.consistent_direction(mode_id, vec)
-                labeled_vectors[mode_id].append(val)
-                labeled_vectors[mode_id].append(new_vec)
-                continue
-            if p14<0:
-                #mode 2,3 or 5
-                mode_id = self.mode_checker235(vec)
-                # print(mode_id)
-            #mode 1,4,6 or 7
+            elif p14>0:
+                mode_id = 1
+
             else:
-                mode_id = self.mode_checker1467(vec)
-            if not labeled_vectors[mode_id] == []:
-                print('mislabeling')
-                print('ID %d' % mode_id)
-                print('old')
-                print(labeled_vectors[mode_id])
-                print(self.sign_compare(labeled_vectors[mode_id][1]))
-                print('candidate')
-                print(val,vec)
-                print(self.sign_compare(vec))
+                mode_id = self.mode_checker235(vec)
             new_vec = self.consistent_direction(mode_id, vec)
             labeled_vectors[mode_id].append(val)
             labeled_vectors[mode_id].append(new_vec)
@@ -430,7 +415,7 @@ class System():
         flipped = numpy.array(vector)
         flip = False
         new_vec = tuple(flipped)
-        if label in [1,6,7]:
+        if label in [1,7]:
             if vector[0]<0:
                 flip =True
         if label == 3:
@@ -441,9 +426,10 @@ class System():
             #4 -> el1 <0
             if vector[1] > 0:
                 flip =True
-        if label == 2:
+        if label in [2,6]:
             #2 -> el5 >0
-            if vector[5] <0:
+            #6 -> el5 >0
+            if vector[5] >0:
                 flip=True
         if label == 5:
             #5 -> el1 >0
@@ -453,7 +439,6 @@ class System():
             new_vec = tuple(-1*flipped)
         # print(label, new_vec)
         return new_vec
-
 
     def sign_compare(self, vector):
         #a01, a02, a05, a12, a15, a25
@@ -465,3 +450,38 @@ class System():
         a25 = vector[2]*vector[5]<0
         negatives = (a01,a02,a05,a12,a15,a25)
         return negatives
+
+
+
+    def labeled_spectra_mono(self):
+        spectra = self.spectrum_finder()
+        naive_sort = sorted(spectra, key=lambda el : el[0])
+        #spectra is list of w^2, vector pairs
+        labeled_vectors = {1:[],2:[],3:[],4:[],5:[],6:[],7:[]}
+        for index in range(7):
+            mode = naive_sort[index]
+            val = mode[0]
+            vec = mode[1]
+            p14 = vec[1]/vec[4]
+            p23 = vec[2]/vec[3]
+            p56 = vec[5]/vec[6]
+            p25 =vec[2]/vec[5]
+            if index in [2,5,6]:
+                mode_id = index+1
+            elif index in [0,1]:
+                if p14 >0:
+                    mode_id=1
+                else:
+                    mode_id=2
+            else:
+                #mode 4 and 5 (index 3 and 4)
+                # if abs(vec[0])< 0.01 and abs(vec[1]) < .01:
+                if p14>0:
+                    mode_id=5
+                else:
+                    mode_id=4
+            #     mode_id = self.mode_checker235(vec)
+            new_vec = self.consistent_direction(mode_id, vec)
+            labeled_vectors[mode_id].append(val)
+            labeled_vectors[mode_id].append(new_vec)
+        return labeled_vectors
