@@ -173,14 +173,15 @@ def val_drift_mono():
     alphas = []
     a_min=1.15
     magnets.load_state(3.5)
-
+    log_plot = True
     figure, subplots = pyplot.subplots(1)
     figure.set_figheight(6)
     figure.set_figwidth(6)
     subplots.set_xlabel('$\\alpha$', fontsize=16)
     subplots.set_ylabel('$\\omega^2$', fontsize=16)
     subplots.set_xlim(a_min,3.5)
-    subplots.set_ylim(0,10)
+    if not log_plot:
+        subplots.set_ylim(0,10)
     while magnets.alpha >a_min:
         print(magnets.alpha)
         alphas.append(magnets.alpha)
@@ -194,8 +195,10 @@ def val_drift_mono():
         magnets.load_state(magnets.alpha-.009, down=mono_specific)
     for i in range(7):
         curve = [vals[i] for vals in eigen_drifting]
-        subplots.plot(alphas, curve)
-        # subplots.plot(alphas, numpy.log(curve))
+        if log_plot:
+            subplots.plot(alphas, numpy.log(curve))
+        else:
+            subplots.plot(alphas, curve)
     time_label = ("%d" % time.time())[-5:]
     pyplot.savefig(time_label+'-freqs_mono.png')
 
@@ -261,8 +264,8 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
     return
 
 if __name__ == '__main__':
-    eigen_vec_drift_plot()
+    # eigen_vec_drift_plot()
     # eigen_val_drift_plot()
     # vec_drift_mono()
-    # val_drift_mono()
+    val_drift_mono()
     # eig_vec_schematic()

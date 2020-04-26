@@ -170,6 +170,22 @@ def debugging_labeler():
         # print(modes[6][1])
         # print('')
 
+def writing_more_sig_figs():
+    magnets = system.System()
+    magnets.load_state(.5)
+    eigen_states = magnets.labeled_spectra()
+    print(eigen_states.keys())
+    address_template = './saved_eigenmodes/poly_%d_mode.txt'
+    destinations = []
+    line_template = '%.9f,'+'%.9f,'+'%.9f,'*7
+    for key in eigen_states.keys():
+        destinations.append(open(address_template%key, 'w'))
+
+    for key in eigen_states.keys():
+        data = [magnets.alpha, eigen_states[key][0]]+list(eigen_states[key][1])
+        destinations[key-1].write(line_template % tuple(data))
+
+
 
 # central_bug()
 # debugging_2()
@@ -177,4 +193,5 @@ def debugging_labeler():
 # debugging_4()
 # debugging_5()
 # debugging_6()
-debugging_labeler()
+# debugging_labeler()
+writing_more_sig_figs()

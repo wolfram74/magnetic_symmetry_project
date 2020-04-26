@@ -9,7 +9,7 @@ def gen_text():
     magnets = system.System()
     equilibria = gen_states(magnets)
     store = open('stored_states.txt', 'w')
-    template = '%f, '*8+'\n'
+    template = '%.9f, '*8+'\n'
     print(template)
     for state in equilibria:
         store.write(template % state)
@@ -19,7 +19,7 @@ def gen_down_text():
     magnets = system.System()
     equilibria = goin_down_states(magnets)
     store = open('stored_states_down.txt', 'w')
-    template = '%f, '*8+'\n'
+    template = '%.9f, '*8+'\n'
     print(template)
     for state in equilibria:
         store.write(template % state)

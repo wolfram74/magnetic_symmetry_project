@@ -263,7 +263,7 @@ class System():
             return
         try:
             if down and desired_alpha> .85 and desired_alpha <2.5:
-                saves = open('stored_states_down.txt', 'r')
+                saves = open('stored_states_down 2.txt', 'r')
             else:
                 saves = open('stored_states.txt', 'r')
             last_alpha = 0.
