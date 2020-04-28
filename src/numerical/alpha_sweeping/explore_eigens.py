@@ -31,8 +31,28 @@ def color_vect(j, max_val=6):
     b = norm
     return (r,g,b,1)
 
+def cache_poly_load():
+    template = './saved_eigenmodes/poly_%d_mode.txt'
+    alphas = []
+    eigen_drifting = [[] for i in range(7)]
+    eigen_vals = [[] for i in range(7)]
+    for i in range(7):
+        address = template % (i+1)
+        cache = open(address, 'r')
+        for line in cache:
+            split = line.rstrip().split(',')
+            alpha = float(split[0])
+            val = float(split[1])
+            # print(split[2:])
+            vector = [float(el) for el in split[2:-1]]
+            if i==0:
+                alphas.append(alpha)
+            eigen_vals[i].append(val)
+            eigen_drifting[i].append(vector)
+    return alphas, eigen_drifting, eigen_vals
 
-def eigen_vec_drift_plot():
+
+def eigen_vec_drift_plot(cached = True):
     eigen_drifting = [[] for i in range(7)]
     alphas = []
     figure, subplots = pyplot.subplots(7)
@@ -43,7 +63,11 @@ def eigen_vec_drift_plot():
     styles = ['-','--', '--','--', ' ',' ', ' ']
     colors = ['k','r', 'g', 'b', 'r', 'b','g']
     a_max = 2.48
+    if cached:
+        alphas, eigen_drifting, freqs= cache_poly_load()
     while magnets.alpha <a_max:
+        if cached:
+            break
         print(magnets.alpha)
         alphas.append(magnets.alpha)
         tidy_eigs = magnets.labeled_spectra()
@@ -264,8 +288,8 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
     return
 
 if __name__ == '__main__':
-    # eigen_vec_drift_plot()
+    eigen_vec_drift_plot()
     # eigen_val_drift_plot()
     # vec_drift_mono()
-    val_drift_mono()
+    # val_drift_mono()
     # eig_vec_schematic()
