@@ -51,7 +51,6 @@ def cache_poly_load():
             eigen_drifting[i].append(vector)
     return alphas, eigen_drifting, eigen_vals
 
-
 def eigen_vec_drift_plot(cached = True):
     eigen_drifting = [[] for i in range(7)]
     alphas = []
@@ -100,12 +99,23 @@ def eigen_vec_drift_plot(cached = True):
                 marker=markers[j],
                 markevery=3
                 )
+    vec_poly_annotate(subplots)
+    time_label = ("%d" % time.time())[-5:]
+    pyplot.savefig(time_label+'-vectors.png')
+
+def vec_poly_annotate(subplots):
     subplots[0].annotate(s='$\\phi_0$', xy=(.05,.9))
     subplots[0].annotate(s='$\\phi_5,\\phi_6$', xy=(.25,.25))
     subplots[0].annotate(s='$\\phi_1, \\phi_4$', xy=(1.0,0.1))
     subplots[0].annotate(s='$\\phi_2, \\phi_3$', xy=(.5,-.3))
-    time_label = ("%d" % time.time())[-5:]
-    pyplot.savefig(time_label+'-vectors.png')
+    subplots[1].annotate(s='$\\phi_0$', xy=(.1,.05))
+    subplots[1].annotate(s='$\\phi_5$', xy=(.5,.6))
+    subplots[1].annotate(s='$\\phi_4$', xy=(1.0,.40))
+    subplots[1].annotate(s='$\\phi_2$', xy=(.5,.2))
+    subplots[1].annotate(s='$\\phi_3$', xy=(.5,-.2))
+    subplots[1].annotate(s='$\\phi_1$', xy=(1.0,-.40))
+    subplots[1].annotate(s='$\\phi_6$', xy=(.5,-.65))
+
 
 def eigen_val_drift_plot():
     eigen_drifting = []
