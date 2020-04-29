@@ -98,7 +98,7 @@ def eigen_vec_drift_plot(cached = True):
                 color=colors[j],
                 linestyle=styles[j],
                 marker=markers[j],
-                markevery=3, markersize=6
+                markevery=3, markersize=3
                 )
     vec_poly_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
@@ -148,9 +148,6 @@ def vec_poly_annotate(subplots):
     subplots[6].annotate(s='$\\phi_2, \\phi_3$', xy=(.75,.65))
     subplots[6].annotate(s='$\\phi_1, \\phi_4$', xy=(1.2,0.33))
     subplots[6].annotate(s='$\\phi_5,\\phi_6$', xy=(1.2,-.3))
-
-
-
 
 def eigen_val_drift_plot():
     eigen_drifting = []
