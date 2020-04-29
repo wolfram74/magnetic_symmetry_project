@@ -108,6 +108,7 @@ def vec_poly_annotate(subplots):
     subplots[0].annotate(s='$\\phi_5,\\phi_6$', xy=(.25,.25))
     subplots[0].annotate(s='$\\phi_1, \\phi_4$', xy=(1.0,0.1))
     subplots[0].annotate(s='$\\phi_2, \\phi_3$', xy=(.5,-.3))
+
     subplots[1].annotate(s='$\\phi_0$', xy=(.1,.05))
     subplots[1].annotate(s='$\\phi_5$', xy=(.5,.6))
     subplots[1].annotate(s='$\\phi_4$', xy=(1.0,.40))
@@ -115,6 +116,19 @@ def vec_poly_annotate(subplots):
     subplots[1].annotate(s='$\\phi_3$', xy=(.5,-.2))
     subplots[1].annotate(s='$\\phi_1$', xy=(1.0,-.40))
     subplots[1].annotate(s='$\\phi_6$', xy=(.5,-.65))
+
+    subplots[2].annotate(s='$\\phi_0$', xy=(.9,.05))
+    subplots[2].annotate(s='$\\phi_2$', xy=(.25,.60))
+    subplots[2].annotate(s='$\\phi_6$', xy=(.25,.35))
+    subplots[2].annotate(s='$\\phi_4$', xy=(.25,.15))
+    subplots[2].annotate(s='$\\phi_1$', xy=(.25,-.20))
+    subplots[2].annotate(s='$\\phi_5$', xy=(.25,-.40))
+    subplots[2].annotate(s='$\\phi_3$', xy=(.25,-.7))
+
+    subplots[3].annotate(s='$\\phi_0$', xy=(.05,.075))
+    subplots[3].annotate(s='$\\phi_5,\\phi_6$', xy=(.25,.4))
+    subplots[3].annotate(s='$\\phi_2, \\phi_3$', xy=(.25,.15))
+    subplots[3].annotate(s='$\\phi_1, \\phi_4$', xy=(.25,-0.5))
 
 
 def eigen_val_drift_plot():
