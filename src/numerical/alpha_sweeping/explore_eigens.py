@@ -59,6 +59,7 @@ def eigen_vec_drift_plot(cached = True):
     figure.set_figwidth(6)
     magnets.load_state(.01)
     markers = [' ',' ',' ',' ', 'x', 'x', 'x']
+    marker_size = []
     styles = ['-','--', '--','--', ' ',' ', ' ']
     colors = ['k','r', 'g', 'b', 'r', 'b','g']
     a_max = 2.48
@@ -97,7 +98,7 @@ def eigen_vec_drift_plot(cached = True):
                 color=colors[j],
                 linestyle=styles[j],
                 marker=markers[j],
-                markevery=3
+                markevery=3, markersize=6
                 )
     vec_poly_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
