@@ -185,6 +185,16 @@ def writing_more_sig_figs():
         data = [magnets.alpha, eigen_states[key][0]]+list(eigen_states[key][1])
         destinations[key-1].write(line_template % tuple(data))
 
+def low_alpha_mode1():
+    magnets= system.System()
+    magnets.load_state(.18)
+    modes = magnets.labeled_spectra()
+    print(modes[1])
+    magnets.shift_alpha_and_stablize(.01)
+    modes = magnets.labeled_spectra()
+    print(modes[1])
+
+
 
 
 # central_bug()
@@ -194,4 +204,5 @@ def writing_more_sig_figs():
 # debugging_5()
 # debugging_6()
 # debugging_labeler()
-writing_more_sig_figs()
+# writing_more_sig_figs()
+low_alpha_mode1()

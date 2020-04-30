@@ -31,9 +31,10 @@ def color_vect(j, max_val=6):
     b = norm
     return (r,g,b,1)
 
-def cache_poly_load():
-    template = './saved_eigenmodes/poly_%d_mode.txt'
+def cache_poly_load(source='poly'):
+    template = './saved_eigenmodes/'+source+'_%d_mode.txt'
     alphas = []
+    e_vals = []
     eigen_drifting = [[] for i in range(7)]
     eigen_vals = [[] for i in range(7)]
     for i in range(7):
@@ -49,7 +50,10 @@ def cache_poly_load():
                 alphas.append(alpha)
             eigen_vals[i].append(val)
             eigen_drifting[i].append(vector)
-    return alphas, eigen_drifting, eigen_vals
+        cache.close()
+    for ind in range(len(eigen_vals[0])):
+        e_vals.append([mode[ind] for mode in eigen_vals])
+    return alphas, eigen_drifting, e_vals
 
 def eigen_vec_drift_plot(cached = True):
     eigen_drifting = [[] for i in range(7)]
@@ -149,19 +153,21 @@ def vec_poly_annotate(subplots):
     subplots[6].annotate(s='$\\phi_1, \\phi_4$', xy=(1.2,0.33))
     subplots[6].annotate(s='$\\phi_5,\\phi_6$', xy=(1.2,-.3))
 
-def eigen_val_drift_plot():
+def eigen_val_drift_plot(cached =False):
     eigen_drifting = []
     alphas = []
     figure, subplots = pyplot.subplots(1)
     figure.set_figheight(6)
 
     figure.set_figwidth(6)
-    subplots.set_ylim(0,10)
+    subplots.set_ylim(0,6)
     subplots.set_xlabel('$\\alpha$', fontsize=16)
-    subplots.set_ylabel('$\\omega^2$', fontsize=16)
+    subplots.set_ylabel('$\\omega$', fontsize=16)
     magnets.load_state(.01)
     a_max=2.48
-    while magnets.alpha <a_max:
+    if cached:
+        alphas, e_vecs, eigen_drifting = cache_poly_load()
+    while magnets.alpha <a_max and not cached:
         print(magnets.alpha)
         alphas.append(magnets.alpha)
         tidy_eigs = magnets.labeled_spectra()
@@ -174,11 +180,12 @@ def eigen_val_drift_plot():
     for i in range(7):
         curve = [vals[i] for vals in eigen_drifting]
         # subplots.plot(alphas, numpy.log(curve))
-        subplots.plot(alphas, curve)
+        subplots.plot(alphas, numpy.sqrt(curve))
     time_label = ("%d" % time.time())[-5:]
     pyplot.savefig(time_label+'-freqs.png')
 
-def vec_drift_mono():
+
+def vec_drift_mono(cached = False):
     eigen_drifting = [[] for i in range(7)]
     alphas = []
     figure, subplots = pyplot.subplots(7)
@@ -191,7 +198,9 @@ def vec_drift_mono():
     a_min = 1.15
     # a_min = 1.15 # goal
     # order preserved until 1.8 I think
-    while magnets.alpha > a_min:
+    if cached:
+        alphas, eigen_drifting, e_vals = cache_poly_load(source='mono')
+    while magnets.alpha > a_min and not cached:
         print(magnets.alpha)
         alphas.append(magnets.alpha)
         tidy_eigs = magnets.labeled_spectra_mono()
@@ -229,10 +238,45 @@ def vec_drift_mono():
                 color=colors[j],
                 linestyle=styles[j],
                 marker=markers[j],
-                markevery=5
+                markevery=5, markersize = 3
                 )
+    vec_mono_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
     pyplot.savefig(time_label+'-vectors_mono.png')
+
+def vec_mono_annotate(subplots):
+    subplots[0].annotate(s='$\\phi_0$', xy=(1.5,.5))
+    subplots[0].annotate(s='$\\phi_1, \\phi_4$', xy=(1.5,0.1))
+    subplots[0].annotate(s='$\\phi_2, \\phi_3,\\phi_5,\\phi_6$', xy=(1.4,-.6))
+
+    subplots[2].annotate(s='$\\phi_0, \\phi_1, \\phi_4$', xy=(1.5,.1))
+    subplots[2].annotate(s='$\\phi_2, \\phi_6$', xy=(1.5,0.6))
+    subplots[2].annotate(s='$\\phi_3, \\phi_5$', xy=(1.5,-.63))
+
+    subplots[4].annotate(s='$\\phi_0$', xy=(1.75,.15))
+    subplots[4].annotate(s='$\\phi_1, \\phi_4$', xy=(1.5,0.8))
+    subplots[4].annotate(s='$\\phi_2, \\phi_3,\\phi_5,\\phi_6$', xy=(1.75,-.4))
+
+    subplots[5].annotate(s='$\\phi_0, \\phi_1, \\phi_4$', xy=(1.5,.1))
+    subplots[5].annotate(s='$\\phi_2, \\phi_3$', xy=(1.5,0.6))
+    subplots[5].annotate(s='$\\phi_5, \\phi_6$', xy=(1.5,-.63))
+
+    subplots[6].annotate(s='$\\phi_0$', xy=(1.5,.79))
+    subplots[6].annotate(s='$\\phi_2, \\phi_3,\\phi_5,\\phi_6$', xy=(1.5,.3))
+    subplots[6].annotate(s='$\\phi_1, \\phi_4$', xy=(1.5,-0.1))
+    # subplots[0].annotate(s='$\\phi_2, \\phi_3$', xy=(1.6,-.6))
+
+    subplots[1].annotate(s='$\\phi_0$', xy=(1.2,.05))
+    subplots[1].annotate(s='$\\phi_2,\\phi_5$', xy=(1.5,.6))
+    subplots[1].annotate(s='$\\phi_4$', xy=(1.5,.25))
+    subplots[1].annotate(s='$\\phi_1$', xy=(1.5,-.30))
+    subplots[1].annotate(s='$\\phi_3,\\phi_6$', xy=(1.5,-.63))
+
+    subplots[3].annotate(s='$\\phi_0$', xy=(1.2,.05))
+    subplots[3].annotate(s='$\\phi_4$', xy=(1.75,.75))
+    subplots[3].annotate(s='$\\phi_3,\\phi_6$', xy=(1.8,.3))
+    subplots[3].annotate(s='$\\phi_2,\\phi_5$', xy=(1.8,-.35))
+    subplots[3].annotate(s='$\\phi_1$', xy=(1.75,-.60))
 
 def val_drift_mono():
     eigen_drifting = []
@@ -330,8 +374,8 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
     return
 
 if __name__ == '__main__':
-    eigen_vec_drift_plot()
-    # eigen_val_drift_plot()
-    # vec_drift_mono()
+    # eigen_vec_drift_plot()
+    # eigen_val_drift_plot(cached=True)
+    vec_drift_mono(cached=True)
     # val_drift_mono()
     # eig_vec_schematic()
