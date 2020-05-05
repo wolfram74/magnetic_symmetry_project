@@ -124,6 +124,6 @@ if __name__=='__main__':
     # small_amp_alph_sweep()
     # eig_plots()
     # alphs = [.5, 1., 1.5, 2.4, 3.]
-    alphs = [1.17, 2.47]
+    alphs = [2.0, 2.05, 2.1]
     for alph in alphs:
         amplitdue_comparisons(alph,down=True)
