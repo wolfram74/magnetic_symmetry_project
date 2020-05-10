@@ -35,3 +35,7 @@ mode 3,6
 	difference
 	val2 < lower than val4?
 	sum of abs(vec) greater for 2 than 4?
+
+problem with mode 5 ~
+
+-0.27763613	-0.27763613	-0.2776318	-2.78E-01

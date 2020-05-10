@@ -203,7 +203,7 @@ def high_alpha_modes():
         print(key)
         print(modes[key])
     # print(modes)
-    magnets.load_state(1.5,down=True)
+    magnets.load_state(2.52,down=True)
     modes = magnets.labeled_spectra_mono()
     print(magnets.alpha)
     for key in modes.keys():

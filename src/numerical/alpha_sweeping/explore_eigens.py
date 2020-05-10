@@ -424,7 +424,8 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
 if __name__ == '__main__':
     # eigen_vec_drift_plot()
     # eigen_val_drift_plot(cached=True)
-    vec_drift_mono(cached=True)
+    # vec_drift_mono(cached=True)
     # val_drift_mono(cached=True)
+    val_drift_mono()
     # eig_vec_schematic()
     # mono_mode1()

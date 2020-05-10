@@ -463,6 +463,13 @@ class System():
             val = mode[0]
             vec = mode[1]
             mode_id = self.mono_mode_index(vec, index)
+            if mode_id == None:
+                print(index)
+                print(vec)
+                print(vec[1]/vec[0])
+                print(self.nearly_equal(
+                    [vec[2],vec[3],vec[5],vec[6]]
+                ))
             #at high alpha  modes 4,5,6 (index 3,4,5) need differentiation
             new_vec = self.consistent_direction(mode_id, vec)
             labeled_vectors[mode_id].append(val)
@@ -483,7 +490,6 @@ class System():
         sim014 = self.nearly_equal(
             [vec[0],vec[1],vec[4]]
             )
-
 
         if sim2356 :
             #mode 1 or 5
@@ -506,7 +512,7 @@ class System():
                 return 4
 
 
-    def nearly_equal(self, nums, tolerance=10**-6):
+    def nearly_equal(self, nums, tolerance=10**-3):
         #check all numbers are nearly equal
         if len(nums) in [0,1]:
             return True
@@ -517,5 +523,5 @@ class System():
                 # print(nums)
                 # print(abs(num-average)*10**6-1)
                 return False
-        print(nums)
+        # print(nums)
         return True
