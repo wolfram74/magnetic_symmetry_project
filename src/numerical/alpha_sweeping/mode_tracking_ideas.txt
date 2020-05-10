@@ -32,5 +32,6 @@ mode 3,6
 
 2,4
 	similar helical structure
+	difference
 	val2 < lower than val4?
 	sum of abs(vec) greater for 2 than 4?

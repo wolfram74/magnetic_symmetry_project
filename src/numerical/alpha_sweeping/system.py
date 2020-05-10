@@ -462,39 +462,49 @@ class System():
             mode = naive_sort[index]
             val = mode[0]
             vec = mode[1]
-            p14 = vec[1]/vec[4]
-            p23 = vec[2]/vec[3]
-            p56 = vec[5]/vec[6]
-            p25 =vec[2]/vec[5]
-            sim2356 = self.nearly_equal(
-                [vec[2],vec[3],vec[5],vec[6]]
-                )
-            sim014 = self.nearly_equal(
-                [vec[0],vec[1],vec[4]]
-                )
+            mode_id = self.mono_mode_index(vec, index)
             #at high alpha  modes 4,5,6 (index 3,4,5) need differentiation
-            if index == 6:
-                mode_id = index+1
-            if sim2356:
-                #mode 1 or 5
-                mode_id = index+1
-            elif index in [0,1]:
-                if p14 >0:
-                    mode_id=1
-                else:
-                    mode_id=2
-            else:
-                #mode 4 and 5 (index 3 and 4)
-                # if abs(vec[0])< 0.01 and abs(vec[1]) < .01:
-                if p14>0:
-                    mode_id=5
-                else:
-                    mode_id=4
-            #     mode_id = self.mode_checker235(vec)
             new_vec = self.consistent_direction(mode_id, vec)
             labeled_vectors[mode_id].append(val)
             labeled_vectors[mode_id].append(new_vec)
         return labeled_vectors
+
+    def mono_mode_index(self, vec, index):
+        if index == 6:
+            return index+1
+
+        p14 = vec[1]/vec[4]
+        p23 = vec[2]/vec[3]
+        p56 = vec[5]/vec[6]
+        p25 =vec[2]/vec[5]
+        sim2356 = self.nearly_equal(
+            [vec[2],vec[3],vec[5],vec[6]]
+            )
+        sim014 = self.nearly_equal(
+            [vec[0],vec[1],vec[4]]
+            )
+
+
+        if sim2356 :
+            #mode 1 or 5
+            if abs(vec[1]/vec[0])>1.5:
+                return 5
+            else:
+                return 1
+
+        if sim014:
+            # if self.nearly_equal([vec[2], vec[6]]):
+            if p23 < 0:
+                return 3
+            else:
+                return 6
+
+        if p14<0:
+            if index <3:
+                return 2
+            else:
+                return 4
+
 
     def nearly_equal(self, nums, tolerance=10**-6):
         #check all numbers are nearly equal
@@ -504,5 +514,8 @@ class System():
         average = total/len(nums)
         for num in nums:
             if abs(num-average)>tolerance:
+                # print(nums)
+                # print(abs(num-average)*10**6-1)
                 return False
+        print(nums)
         return True

@@ -198,16 +198,26 @@ def high_alpha_modes():
     magnets= system.System()
     magnets.load_state(3.5)
     modes = magnets.labeled_spectra_mono()
-    print(modes)
-    magnets.shift_alpha_and_stablize(.7)
+    print(magnets.alpha)
+    for key in modes.keys():
+        print(key)
+        print(modes[key])
+    # print(modes)
+    magnets.load_state(1.5,down=True)
     modes = magnets.labeled_spectra_mono()
-    print(modes)
-    magnets.shift_alpha_and_stablize(.2)
-    modes = magnets.labeled_spectra_mono()
-    print(modes)
-    magnets.shift_alpha_and_stablize(.2)
-    modes = magnets.labeled_spectra_mono()
-    print(modes)
+    print(magnets.alpha)
+    for key in modes.keys():
+        print(key)
+        print(modes[key])
+    # magnets.shift_alpha_and_stablize(.7)
+    # modes = magnets.labeled_spectra_mono()
+    # print(modes)
+    # magnets.shift_alpha_and_stablize(.2)
+    # modes = magnets.labeled_spectra_mono()
+    # print(modes)
+    # magnets.shift_alpha_and_stablize(.2)
+    # modes = magnets.labeled_spectra_mono()
+    # print(modes)
 
 def mode2vs4():
     magnets= system.System()
@@ -220,6 +230,8 @@ def mode2vs4():
     print(sum(abs2))
     print(sum(abs4))
 
+# def mode1vs5():
+
 
 
 # central_bug()
@@ -231,8 +243,8 @@ def mode2vs4():
 # debugging_labeler()
 # writing_more_sig_figs()
 # low_alpha_mode1()
-# high_alpha_modes()
-mode2vs4()
+high_alpha_modes()
+# mode2vs4()
 '''
 regular garden+ranch, regular basil mac n' cheese, scotcharoo, udon+chicken
 '''
