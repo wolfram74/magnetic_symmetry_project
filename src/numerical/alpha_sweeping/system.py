@@ -477,6 +477,7 @@ class System():
         return labeled_vectors
 
     def mono_mode_index(self, vec, index):
+        #yay
         if index == 6:
             return index+1
 
