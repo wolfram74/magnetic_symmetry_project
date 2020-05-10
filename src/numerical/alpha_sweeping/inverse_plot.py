@@ -15,10 +15,14 @@ def deltA_from_deltU(alpha, deltU):
 def val_drift_mono(cached =False):
     eigen_drifting = []
     alphas = []
-    u_min= .22
+    u_min= .01
     deltU = -.01
     magnets.load_state(1.15, down=True)
-    log_plot = False
+    u = 1/magnets.alpha
+
+    log_plot = True
+    running = True
+    last = False
 
     figure, subplots = pyplot.subplots(1)
     figure.set_figheight(6)
@@ -31,7 +35,8 @@ def val_drift_mono(cached =False):
         subplots.set_ylim(0,4)
     if cached:
         alphas, e_vecs, eigen_drifting = cache_poly_load(source='mono')
-    while 1./magnets.alpha > u_min and not cached:
+    # while 1./magnets.alpha > u_min and not cached:
+    while running and not cached:
         print(magnets.alpha, 1./magnets.alpha)
         alphas.append(magnets.alpha)
         tidy_eigs = magnets.labeled_spectra_mono()
@@ -40,14 +45,20 @@ def val_drift_mono(cached =False):
         # print(w2)
         e_vals = [tidy_eigs[i+1][0] for i in range(7)]
         eigen_drifting.append(e_vals)
+        if u < u_min and last:
+            break
         magnets.shift_alpha_and_stablize(deltA_from_deltU(magnets.alpha, deltU))
+        u = 1/magnets.alpha
+        if u < u_min:
+            last=True
+    u_vals = 1./numpy.array(alphas)
     for i in range(7):
         curve = [vals[i] for vals in eigen_drifting]
         if log_plot:
-            subplots.plot(alphas, numpy.log(curve))
+            scaled = curve*(u_vals)
+            subplots.plot(u_vals, numpy.log(scaled))
         else:
             # subplots.plot(alphas, curve)
-            u_vals = 1./numpy.array(alphas)
             scaled = curve*(u_vals)
             subplots.plot(u_vals, scaled)
     time_label = ("%d" % time.time())[-5:]

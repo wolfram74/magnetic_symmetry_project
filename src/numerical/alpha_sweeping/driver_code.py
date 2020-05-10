@@ -230,6 +230,26 @@ def mode2vs4():
     print(sum(abs2))
     print(sum(abs4))
 
+def limit_modes():
+    magnets= system.System()
+    magnets.load_state(3.5)
+    magnets.shift_alpha_and_stablize(6.5)
+    for i in range(9):
+        print(i+1)
+        magnets.shift_alpha_and_stablize(10.)
+    modes = magnets.labeled_spectra_mono()
+    print(magnets.alpha)
+    for key in modes.keys():
+        print('mode %d' % key)
+
+        omega = modes[key][0]
+        print("omega^2: %.9f , omega^2/alpha: %.9f" % (omega, omega/magnets.alpha))
+        vec_template = '%.6f, '*7
+        print('vector:')
+        print(vec_template% tuple(modes[key][1]))
+
+
+
 # def mode1vs5():
 
 
@@ -243,8 +263,6 @@ def mode2vs4():
 # debugging_labeler()
 # writing_more_sig_figs()
 # low_alpha_mode1()
-high_alpha_modes()
+# high_alpha_modes()
 # mode2vs4()
-'''
-regular garden+ranch, regular basil mac n' cheese, scotcharoo, udon+chicken
-'''
+limit_modes()
