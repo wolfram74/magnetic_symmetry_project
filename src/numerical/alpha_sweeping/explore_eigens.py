@@ -233,6 +233,8 @@ def vec_drift_mono(cached = False):
 
     for i in range(7):
         subplots[i].set_title(label='$\\omega_%d$' % (i+1), loc='right')
+        # subplots[i].set_ylim(-.4,-.37)
+        # subplots[i].set_xlim(1.9,2.8)
         subplots[i].set_ylim(-1,1)
         subplots[i].set_xlim(a_min,3.5)
         subplots[i].set_xlabel('$\\alpha$', fontsize=16)
@@ -362,8 +364,8 @@ def eig_vec_schematic():
     figure, subplots = pyplot.subplots(7)
     figure.set_figheight(28)
     figure.set_figwidth(6)
-    magnets.load_state(2.05, down=True)
-    named_eigs = magnets.labeled_spectra()
+    magnets.load_state(2.1, down=True)
+    named_eigs = magnets.labeled_spectra_mono()
     equilib = magnets.state[:7]
     for index in range(7):
         mode_ID = index+1
@@ -422,7 +424,7 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
 if __name__ == '__main__':
     # eigen_vec_drift_plot()
     # eigen_val_drift_plot(cached=True)
-    # vec_drift_mono(cached=True)
+    vec_drift_mono(cached=True)
     # val_drift_mono(cached=True)
     # eig_vec_schematic()
-    mono_mode1()
+    # mono_mode1()

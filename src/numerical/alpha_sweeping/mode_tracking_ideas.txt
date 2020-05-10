@@ -13,3 +13,24 @@ proposed algorithm:
 			after calculation, save results for each object in a text file lines formatted
 				alpha, w^2, dphi0,...,dphi6
 		it should have a function that when given a vector would calculate 1st and 2nd hypothetical derivatives when appended to the existing record of vectors
+
+mono mode:
+mode 7
+	always highest eigen val
+
+mode 1,5
+	2,3,5,6 are paired
+	difference:
+		ordering of 1,4 vs 0?
+
+mode 3,6
+0,1,4 are essentially equal
+	difference:
+	mode 3: 2,6 and 3,5 are paired
+	mode 6: 2,3 and 5,6 are paired
+
+
+2,4
+	similar helical structure
+	val2 < lower than val4?
+	sum of abs(vec) greater for 2 than 4?

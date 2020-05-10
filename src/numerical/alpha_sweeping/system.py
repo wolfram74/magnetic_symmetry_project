@@ -466,7 +466,17 @@ class System():
             p23 = vec[2]/vec[3]
             p56 = vec[5]/vec[6]
             p25 =vec[2]/vec[5]
-            if index in [2,5,6]:
+            sim2356 = self.nearly_equal(
+                [vec[2],vec[3],vec[5],vec[6]]
+                )
+            sim014 = self.nearly_equal(
+                [vec[0],vec[1],vec[4]]
+                )
+            #at high alpha  modes 4,5,6 (index 3,4,5) need differentiation
+            if index == 6:
+                mode_id = index+1
+            if sim2356:
+                #mode 1 or 5
                 mode_id = index+1
             elif index in [0,1]:
                 if p14 >0:
@@ -485,3 +495,14 @@ class System():
             labeled_vectors[mode_id].append(val)
             labeled_vectors[mode_id].append(new_vec)
         return labeled_vectors
+
+    def nearly_equal(self, nums, tolerance=10**-6):
+        #check all numbers are nearly equal
+        if len(nums) in [0,1]:
+            return True
+        total = sum(nums)
+        average = total/len(nums)
+        for num in nums:
+            if abs(num-average)>tolerance:
+                return False
+        return True
