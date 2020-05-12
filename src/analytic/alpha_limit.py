@@ -9,11 +9,13 @@ def para_bhat():
     sympy.pprint(xhat)
     xhat = xhat.simplify()
     yhat = yhat.simplify()
+    print('simpler xhat, yhat')
     sympy.pprint([xhat, yhat])
     r2 = xhat**2+yhat**2
     sympy.pprint(r2)
     r2 = r2.simplify()
-    # sympy.pprint(r2)
+    print('simplified rhat')
+    sympy.pprint(r2)
     # sympy.pprint(sympy.sqrt(r2).simplify())
     # r2g = (2+sympy.sqrt(3)*sympy.sin(tht))*(2-sympy.sqrt(3)*sympy.sin(tht))
     # sympy.pprint(r2 - r2g.expand())
@@ -21,19 +23,26 @@ def para_bhat():
     # sympy.pprint(sympy.asin(arg))
     # sympy.pprint(sympy.asin(arg.expand()))
     # sympy.pprint(sympy.asin(arg.expand().simplify()))
+    # norming
     phix = sympy.acos(xhat/sympy.sqrt(r2))
     phiy = sympy.asin(yhat/sympy.sqrt(r2))
+    #angle phi_of_theta
     phit = sympy.atan2(yhat, xhat)
     # sympy.pprint(phix.subs(tht, sympy.pi/3).evalf())
     # sympy.pprint(phiy.subs(tht, sympy.pi/3).evalf())
+    print('phi of theta')
+    # sympy.pprint(phit.expand().simplify())
     sympy.pprint(phit.subs(tht, sympy.pi/3).evalf())
 
     sympy.pprint((phit.subs(tht, sympy.pi/3)/sympy.pi).evalf())
     ratio = (phit.subs(tht, sympy.pi/3)/sympy.pi).evalf()
-    sympy.pprint(10*ratio**2)
-    sympy.pprint(phit.subs(tht, 2*sympy.pi/3).evalf())
-    sympy.pprint(phit.subs(tht, 3*sympy.pi/3))
+    # print('pi guess')
+    # sympy.pprint(10*ratio**2)
+    # sympy.pprint((10*ratio**2-sympy.pi).evalf())
+    # sympy.pprint(phit.subs(tht, 2*sympy.pi/3).evalf())
+    # sympy.pprint(phit.subs(tht, 3*sympy.pi/3))
     tht2rat = phit.subs(tht, sympy.pi/3)/sympy.pi
+    print('phi_2 in units of pi')
     sympy.pprint(tht2rat)
     sympy.pprint(tht2rat.expand().simplify())
     sympy.pprint(tht2rat.expand().simplify().evalf())
@@ -76,6 +85,7 @@ def dipole_limit():
     sympy.pprint(mag.evalf())
 
 if __name__ == '__main__':
-    # para_bhat()
+    para_bhat()
     # sympy.pprint(limit_phis())
-    dipole_limit()
+    # dipole_limit()
+
