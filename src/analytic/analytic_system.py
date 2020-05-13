@@ -1,5 +1,5 @@
 import sympy
-
+from sympy.matrices import Matrix, zeros
 cos = sympy.cos
 sin = sympy.sin
 atan = sympy.atan2
@@ -94,12 +94,41 @@ class System():
         r3 = self.rad_matrix[i][j]**(-3)
         return -strength*r3*(t1+t2)/2.
 
+    def PE_i(self,i):
+        expression = 0
+        for j in range(7):
+            expression += self.PE_ij(i, j)
+        return expression
+
     def PE_total(self):
         output = 0
         for i in range(7):
-            for j in range(7):
-                output += self.PE_ij(i,j)
+            output += self.PE_i(i)
         return output
+
+    def acceleration_i(self, i):
+        PE_term = self.PE_i(i)
+        acceleration_term = -sympy.diff(PE_term, self.mu_hats[i])
+        return acceleration_term
+
+    def linearization(self, values):
+        # high alpha limit
+        array = []
+        subs_array = self.make_subs_array(values)
+        for i in range(7):
+            row = []
+            force_i = self.acceleration_i(i)
+            for j in range(7):
+                M_ij = sympy.diff(force_i, self.mu_hats[j])
+                M_ij = M_ij.subs(subs_array)
+                M_ij /= self.magnet_strengths[0]
+                M_ij = sympy.limit(M_ij, self.magnet_strengths[0], sympy.oo)
+                M_ij = M_ij.subs(subs_array).evalf()
+                row.append(M_ij)
+            array.append(row)
+        matrix = sympy.Matrix(array)
+        return matrix
+
 
     def make_subs_array(self, angle_vals):
         swap_vals = []
@@ -109,10 +138,10 @@ class System():
 
     def eval_func_specifically(self, func_name, angle_vals, i=None,j=None):
         concrete_vals = self.make_subs_array(angle_vals)
-        if j:
+        if j!=None:
             expression = getattr(self, func_name)(i, j)
             return expression.subs(concrete_vals)
-        if i:
+        if i!=None:
             expression = getattr(self, func_name)(i)
             return expression.subs(concrete_vals)
         expression = getattr(self, func_name)()
