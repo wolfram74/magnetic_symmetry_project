@@ -248,7 +248,7 @@ def limit_modes():
         print('vector:')
         print(vec_template% tuple(modes[key][1]))
 
-
+def mid_alpha
 
 # def mode1vs5():
 

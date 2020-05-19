@@ -275,11 +275,14 @@ class System():
                 if num_list[0]>desired_alpha:
                     self.alpha = last_alpha
                     self.state = last_state
+                    saves.close()
                     return
                 last_alpha = num_list[0]
                 # print(num_list[1:])
                 last_state = numpy.concatenate((numpy.array(num_list[1:]),numpy.zeros(7)))
             saves.close()
+            print('out of saves, nothing left')
+            raise StandardError
         except:
             print('failed to load saved state, alpha unchanged. Please run sweeper.py')
             return
@@ -288,7 +291,8 @@ class System():
 
     def shift_alpha_and_stablize(self, del_alpha):
         T0 = self.elapsed
-        T_damp = 2.
+        adjust = 1./(1.+.1*self.alpha**.5)
+        T_damp = 2.*adjust
         running = True
         old_alpha = self.alpha
         self.alpha += del_alpha
@@ -298,13 +302,13 @@ class System():
             del_T = self.elapsed-T0
             if del_T > T_damp:
                 scale = (del_T-T_damp)/del_T
-                self.gamma = 2.*(self.alpha+1)*scale
+                self.gamma = 2.*(self.alpha**.5+1)*scale
             force_crit = self.total_delta_sqr() < 10**-8
-            time_crit = del_T > 5.
+            time_crit = del_T > 5.*adjust
             if not force_crit or not time_crit:
                 continue
             running = False
-        if del_T>20.:
+        if del_T>20.*adjust:
             print("going from %f to %f took %f units" % (old_alpha, self.alpha, del_T))
         # print(del_T,)
         return

@@ -64,6 +64,7 @@ def linearization():
     linear_mat = magnets.linearization(magnets.limit_mu_hats)
     x_var = sympy.symbols('x')
     sympy.pprint(linear_mat)
+    print(sympy.latex(linear_mat))
     # characteristic = linear_mat.charpoly(x=x_var)
     # char_expr = characteristic.as_expr().collect(x_var)
     # for term in char_expr.args:
@@ -73,8 +74,9 @@ def linearization():
     eigen_vals = linear_mat.eigenvals()
     for key in eigen_vals.keys():
         # print(key, eigen_vals[key])
-        sympy.pprint(key.evalf())
-        sympy.pprint(eigen_vals[key])
+        # sympy.pprint(key.evalf())
+        degen_eval_pair = (eigen_vals[key],float(sympy.re(key.evalf())))
+        print("%d, %.04f" % degen_eval_pair)
 
 
 def charpoly_play():
@@ -107,3 +109,15 @@ if __name__=='__main__':
     # forces_in_alpha()
     linearization()
     # charpoly_play()
+'''
+1, -0.1815 (mode 1)
+3, -1.3229 (modes 2, 3, 6)
+1, -1.9126 (mode 4)
+1, -2.0000 (mode 5)
+1, -10.5203 (mode 7)
+(modes 2, 3, and 6 have same e-val)
+3 and 6 have qualitative similaries,
+2 odd one out, more like 4
+1,5 and 7 have mostly synchronized movement
+OMEGAS = [0.1815, 1.3229, 1.3229, 2.0000, 1.9126, 1.3229, 10.5203]
+'''

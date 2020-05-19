@@ -8,7 +8,7 @@ from numpy import pi
 def gen_text():
     magnets = system.System()
     equilibria = gen_states(magnets)
-    store = open('stored_states.txt', 'w')
+    store = open('stored_states.txt', 'a')
     template = '%.9f, '*8+'\n'
     print(template)
     for state in equilibria:
@@ -28,15 +28,17 @@ def gen_down_text():
 def gen_states(magnets):
     running = True
     monitor = 10.
-    magnets.alpha = 0.
+    magnets.load_state(1243)
     forward = True
     equilibria = []
     first_step = True
     while running:
-        magnets.shift_alpha_and_stablize(0.01)
+        delta_alpha = magnets.alpha*0.15
+        print(delta_alpha)
+        magnets.shift_alpha_and_stablize(delta_alpha)
         entry = [magnets.alpha]+list(magnets.state[:7])
         equilibria.append(tuple(entry))
-        if magnets.alpha >= 4.:
+        if magnets.alpha >= 1.15**105:
             running = False
     return equilibria
 
@@ -91,10 +93,10 @@ def eigen_modes_poly(poly=True):
 
 
 if __name__ =='__main__':
-    # gen_text()
+    gen_text()
     # gen_down_text()
     # eigen_modes_poly()
-    eigen_modes_poly(poly=False)
+    # eigen_modes_poly(poly=False)
 
 
 # for ind in range(7):
