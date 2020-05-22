@@ -1,6 +1,34 @@
 import system
 import numpy
 
+def rho_n(n,N=6):
+    angle_quant = numpy.pi/N
+    rho_denom = numpy.sin(angle_quant)
+    return numpy.sin(angle_quant*n)/rho_denom
+
+def stump_ZN(N):
+    ZN = 0.
+    angle_quant = numpy.pi/N
+    rho_denom = numpy.sin(angle_quant)
+    # print(angle_quant, rho_denom)
+    for n in range(1, N):
+        rho = rho_n(n, N=N)
+        numer = 1.+numpy.cos(angle_quant*n)**2
+        ZN += numer/rho**3
+    return ZN
+
+def stump_mode_i(i, N=6):
+    ZN = stump_ZN(N)
+    angle_quant = numpy.pi/N
+    lam_i = ZN
+    # print(i)
+    for nu in range(1,N):
+        rho = rho_n(nu, N=N)
+        numer = 1.+numpy.sin(angle_quant*nu)**2
+        cos_term = numpy.cos(2*angle_quant*nu*i)
+        lam_i += numer*cos_term/rho**3
+    return lam_i
+
 def debugging1():
     magnets = system.System()
     # print(magnets.r_vals)
@@ -29,7 +57,6 @@ def debugging1():
     print(magnets.theta_vals[0])
     print(magnets.theta_vals[:,0])
     print(magnets.theta_vals[0] - magnets.theta_vals[:,0])
-
 
 def central_bug():
     magnets = system.System()
@@ -248,10 +275,33 @@ def limit_modes():
         print('vector:')
         print(vec_template% tuple(modes[key][1]))
 
-def mid_alpha
 
-# def mode1vs5():
-
+def compare_with_sump():
+    # for i in range(3, 11):
+    #     ZN = stump_ZN(i)
+    #     print(i, ZN)
+    N = 6
+    omeg_2 = []
+    for i in range(N):
+        omeg_2.append(stump_mode_i(i+1, N=N))
+    omeg_2 = sorted(omeg_2)
+    print(omeg_2)
+    w1, w2, w3, w4 = omeg_2[0],omeg_2[1],omeg_2[4],omeg_2[5]
+    ratios = [w2/w1, w3/w2, w4/w3]
+    print(ratios)
+    print("%04f,"*3 % tuple(ratios))
+    magnets = system.System()
+    naive_spectra = magnets.spectrum_finder()
+    print(naive_spectra)
+    e_vals = [term[0] for term in naive_spectra]
+    print(e_vals)
+    e_vals = sorted(e_vals)
+    w1, w2, w3, w4 = e_vals[0+1],e_vals[1+1],e_vals[4+1],e_vals[5+1]
+    ratios2 = [w2/w1, w3/w2, w4/w3]
+    print(ratios2)
+    print("%04f,"*3 % tuple(ratios2))
+    deltas = [ratios2[i]-ratios[i] for i in range(3)]
+    print(deltas)
 
 
 # central_bug()
@@ -265,4 +315,5 @@ def mid_alpha
 # low_alpha_mode1()
 # high_alpha_modes()
 # mode2vs4()
-limit_modes()
+# limit_modes()
+compare_with_sump()
