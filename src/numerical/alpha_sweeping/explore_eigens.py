@@ -343,13 +343,17 @@ def mono_mode1():
     magnets.load_state(alph_max, down=True)
     alphas = []
     omeg2s = []
+    deltas = []
 
-    figure, subplots = pyplot.subplots(1)
+    figure, subplots = pyplot.subplots(2)
     figure.set_figheight(6)
     figure.set_figwidth(6)
-    subplots.set_xlabel('$\\alpha$', fontsize=16)
-    subplots.set_ylabel('\t\t$\\omega^2$', fontsize=16, labelpad=-10)
-    subplots.set_ylim(0.000,.002)
+    subplots[0].set_xlabel('$\\alpha$', fontsize=16)
+    subplots[0].set_ylabel('\t\t$\\omega^2$', fontsize=16, labelpad=-10)
+    subplots[0].set_ylim(0.000,.002)
+    subplots[1].set_xlabel('$\\alpha$', fontsize=16)
+    subplots[1].set_ylabel('\t\t$1-\\omega_7^2/\\Omega_7^2$', fontsize=16, labelpad=-10)
+    # subplots[1].set_ylim(0.000,.002)
 
     # print(magnets.alpha, alph_min)
     # print(magnets.alpha >= alph_min)
@@ -358,11 +362,13 @@ def mono_mode1():
         alphas.append(magnets.alpha)
         eigs = magnets.labeled_spectra_mono()
         omeg2s.append(eigs[1][0])
+        deltas.append(1-(eigs[7][0]/(10.5203*magnets.alpha)))
         # print('%.9f\t%.9f' %(alphas[-1], omeg2s[-1]))
         magnets.shift_alpha_and_stablize(del_alpha)
 
     # subplots.plot(alphas, numpy.sqrt(omeg2s))
-    subplots.plot(alphas, omeg2s)
+    subplots[0].plot(alphas, omeg2s)
+    subplots[1].plot(alphas, deltas)
     time_label = ("%d" % time.time())[-5:]
     pyplot.savefig(time_label+'-mono_mode1sqrt.png')
 
@@ -431,9 +437,9 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
 
 if __name__ == '__main__':
     # eigen_vec_drift_plot()
-    eigen_val_drift_plot(cached=True)
+    # eigen_val_drift_plot(cached=True)
     # vec_drift_mono(cached=True)
     # val_drift_mono(cached=True)
     # val_drift_mono()
     # eig_vec_schematic()
-    # mono_mode1()
+    mono_mode1()

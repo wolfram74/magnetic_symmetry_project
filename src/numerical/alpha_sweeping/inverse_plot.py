@@ -69,7 +69,8 @@ def val_drift_mono(cached =False):
         else:
             subplots.plot(alphas, curve)
             # scaled = curve*(u_vals)/OMEGAS[i]
-            scaled = curve*(u_vals)
+            # scaled = curve*(u_vals)
+            scaled = numpy.sqrt(curve*(u_vals))
             subplots.plot(u_vals, scaled)
             # subplots.plot(numpy.log10(u_vals), scaled)
     time_label = ("%d" % time.time())[-5:]
