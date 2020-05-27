@@ -166,8 +166,16 @@ def eigen_val_drift_plot(cached =False):
     subplots.set_ylabel('$\\omega$', fontsize=16)
     magnets.load_state(.01)
     a_max=2.48
+    #2.47278 as close to transition as I'm getting
     if cached:
         alphas, e_vecs, eigen_drifting = cache_poly_load()
+        magnets.load_state(2.47)
+        magnets.shift_alpha_and_stablize(.00278)
+        alphas.append(magnets.alpha)
+        tidy_eigs = magnets.labeled_spectra()
+        e_vals = [tidy_eigs[i+1][0] for i in range(7)]
+        eigen_drifting.append(e_vals)
+
     while magnets.alpha <a_max and not cached:
         print(magnets.alpha)
         alphas.append(magnets.alpha)
@@ -423,9 +431,9 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
 
 if __name__ == '__main__':
     # eigen_vec_drift_plot()
-    # eigen_val_drift_plot(cached=True)
+    eigen_val_drift_plot(cached=True)
     # vec_drift_mono(cached=True)
     # val_drift_mono(cached=True)
-    val_drift_mono()
+    # val_drift_mono()
     # eig_vec_schematic()
     # mono_mode1()

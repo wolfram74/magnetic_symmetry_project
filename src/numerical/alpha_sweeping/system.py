@@ -508,13 +508,13 @@ class System():
             if p23 < 0:
                 return 3
             else:
-                return 6
+                return 4
 
         if p14<0:
             if index <3:
                 return 2
             else:
-                return 4
+                return 6
 
 
     def nearly_equal(self, nums, tolerance=10**-3):
@@ -530,3 +530,16 @@ class System():
                 return False
         # print(nums)
         return True
+
+
+'''
+colors:
+blue, green, red,
+teal, pink, yellow,
+black
+mono modes currently labeled
+blue, green, red, V
+yellow, pink, teal,
+black
+swap 4 and 6
+'''

@@ -31,10 +31,11 @@ def val_drift_mono(cached =False):
     # subplots.set_xlim(numpy.log10(u_min), numpy.log10(1/magnets.alpha))
     subplots.set_xlabel('$1/\\alpha$', fontsize=16)
     subplots.set_xlim(0,1/magnets.alpha)
-    subplots.set_ylabel('$\\frac{\\omega^2/\\alpha}{\Omega_i^2}$', fontsize=16)
+    # subplots.set_ylabel('$\\frac{\\omega^2/\\alpha}{\Omega_i^2}$', fontsize=16)
+    subplots.set_ylabel('$\\omega^2/\\alpha$', fontsize=16)
 
     if not log_plot:
-        subplots.set_ylim(0,2.2)
+        subplots.set_ylim(0,4)
     if cached:
         alphas, e_vecs, eigen_drifting = cache_poly_load(source='mono')
     # while 1./magnets.alpha > u_min and not cached:
@@ -66,8 +67,9 @@ def val_drift_mono(cached =False):
             scaled = curve*(u_vals)
             subplots.plot(u_vals, numpy.log10(scaled))
         else:
-            # subplots.plot(alphas, curve)
-            scaled = curve*(u_vals)/OMEGAS[i]
+            subplots.plot(alphas, curve)
+            # scaled = curve*(u_vals)/OMEGAS[i]
+            scaled = curve*(u_vals)
             subplots.plot(u_vals, scaled)
             # subplots.plot(numpy.log10(u_vals), scaled)
     time_label = ("%d" % time.time())[-5:]
