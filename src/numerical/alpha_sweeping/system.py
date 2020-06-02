@@ -415,7 +415,7 @@ class System():
         return 4
 
 
-    def consistent_direction(self, label, vector):
+    def consistent_direction(self, label, vector, mono=False):
         flipped = numpy.array(vector)
         flip = False
         new_vec = tuple(flipped)
@@ -426,14 +426,22 @@ class System():
             #3 -> el2 >0
             if vector[2]< 0:
                 flip =True
-        if label == 4:
+        if label == 4 and not mono:
             #4 -> el1 <0
             if vector[1] > 0:
+                flip =True
+        if label == 4 and mono:
+            #4 -> el1 <0
+            if vector[3] < 0:
                 flip =True
         if label in [2,6]:
             #2 -> el5 >0
             #6 -> el5 >0
             if vector[5] >0:
+                flip=True
+        if label == 6 and mono:
+            flip=False
+            if vector[1] < 0:
                 flip=True
         if label == 5:
             #5 -> el1 >0
@@ -475,7 +483,8 @@ class System():
                     [vec[2],vec[3],vec[5],vec[6]]
                 ))
             #at high alpha  modes 4,5,6 (index 3,4,5) need differentiation
-            new_vec = self.consistent_direction(mode_id, vec)
+            new_vec = self.consistent_direction(
+                mode_id, vec, mono=True)
             labeled_vectors[mode_id].append(val)
             labeled_vectors[mode_id].append(new_vec)
         return labeled_vectors

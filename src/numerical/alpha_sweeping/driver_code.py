@@ -214,12 +214,14 @@ def writing_more_sig_figs():
 
 def low_alpha_mode1():
     magnets= system.System()
-    magnets.load_state(.18)
+    magnets.load_state(2.05, down=True)
     modes = magnets.labeled_spectra()
-    print(modes[1])
-    magnets.shift_alpha_and_stablize(.01)
-    modes = magnets.labeled_spectra()
-    print(modes[1])
+    for mode in modes:
+        print(modes[mode][0])
+    # print(modes[1])
+    # magnets.shift_alpha_and_stablize(.01)
+    # modes = magnets.labeled_spectra()
+    # print(modes[1])
 
 def high_alpha_modes():
     magnets= system.System()
@@ -313,8 +315,8 @@ def compare_with_sump():
 # debugging_6()
 # debugging_labeler()
 # writing_more_sig_figs()
-# low_alpha_mode1()
-high_alpha_modes()
+low_alpha_mode1()
+# high_alpha_modes()
 # mode2vs4()
 # limit_modes()
 # compare_with_sump()
