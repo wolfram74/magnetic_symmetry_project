@@ -67,14 +67,26 @@ def val_drift_mono(cached =False):
             scaled = curve*(u_vals)
             subplots.plot(u_vals, numpy.log10(scaled))
         else:
-            subplots.plot(alphas, curve)
+            # subplots.plot(alphas, curve)
             # scaled = curve*(u_vals)/OMEGAS[i]
-            # scaled = curve*(u_vals)
-            scaled = numpy.sqrt(curve*(u_vals))
+            scaled = curve*(u_vals)
+            # scaled = numpy.sqrt(curve*(u_vals))
             subplots.plot(u_vals, scaled)
             # subplots.plot(numpy.log10(u_vals), scaled)
+    val_mono_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
     pyplot.savefig(time_label+'-freqs_mono_vs_u.png', bbox_inches='tight')
+
+
+def val_mono_annotate(subplot):
+    subplot.annotate(s='$\\omega_1$', xy=(.05,.25))
+    subplot.annotate(s='$\\omega_2$', xy=(.1,.85))
+    subplot.annotate(s='$\\omega_3$', xy=(.1,1.176))
+    subplot.annotate(s='$\\omega_4$', xy=(.05,1.55))
+    subplot.annotate(s='$\\omega_5$', xy=(.05,1.725))
+    subplot.annotate(s='$\\omega_6$', xy=(.05,1.95))
+    subplot.annotate(s='$\\omega_7 \Uparrow$', xy=(.10,3.5))
+
 
 if __name__=='__main__':
     val_drift_mono()

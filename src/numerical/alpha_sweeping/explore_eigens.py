@@ -194,18 +194,27 @@ def eigen_val_drift_plot(cached =False):
         # subplots.plot(alphas, numpy.log(curve))
         # subplots.plot(alphas, numpy.sqrt(curve))
         subplots.plot(alphas, curve)
-    # val_poly_annotate(subplots)
+    val_poly_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
-    pyplot.savefig(time_label+'-freqs.png')
+    pyplot.savefig(time_label+'-freqs.png', bbox_inches='tight')
 
 def val_poly_annotate(subplot):
-    subplot.annotate(s='$\\omega_1$', xy=(1.0,.4))
-    subplot.annotate(s='$\\omega_2$', xy=(1.0,1.52))
-    subplot.annotate(s='$\\omega_3$', xy=(1.0,1.72))
-    subplot.annotate(s='$\\omega_4$', xy=(1.0,1.87))
-    subplot.annotate(s='$\\omega_5$', xy=(1.0,2.2))
-    subplot.annotate(s='$\\omega_6$', xy=(1.0,2.6))
-    subplot.annotate(s='$\\omega_7$', xy=(1.0,2.92))
+    ## omega^2
+    subplot.annotate(s='$\\omega_1$', xy=(1.0,.5**2))
+    subplot.annotate(s='$\\omega_2$', xy=(1.0,1.52**2))
+    subplot.annotate(s='$\\omega_3$', xy=(1.0,1.72**2))
+    subplot.annotate(s='$\\omega_4$', xy=(1.0,1.87**2))
+    subplot.annotate(s='$\\omega_5$', xy=(1.0,2.2**2))
+    subplot.annotate(s='$\\omega_6$', xy=(1.0,2.55**2))
+    subplot.annotate(s='$\\omega_7$', xy=(1.0,2.92**2))
+    ## omega locations
+    # subplot.annotate(s='$\\omega_1$', xy=(1.0,.4))
+    # subplot.annotate(s='$\\omega_2$', xy=(1.0,1.52))
+    # subplot.annotate(s='$\\omega_3$', xy=(1.0,1.72))
+    # subplot.annotate(s='$\\omega_4$', xy=(1.0,1.87))
+    # subplot.annotate(s='$\\omega_5$', xy=(1.0,2.2))
+    # subplot.annotate(s='$\\omega_6$', xy=(1.0,2.6))
+    # subplot.annotate(s='$\\omega_7$', xy=(1.0,2.92))
 
 def deltA_from_deltU(alpha, deltU):
     return -deltU*alpha**2/(1.+deltU*alpha)
@@ -267,9 +276,10 @@ def vec_drift_mono(cached = False):
     #element in eigen drifting is array
         #conisting of w^2, vector pairs
     u_vals = 1./numpy.array(alphas)
+    sub_label = 'a b c d e f g'.split(' ')
 
     for i in range(7):
-        subplots[i].set_title(label='$\\omega_%d$' % (i+1), loc='right')
+        subplots[i].set_title(label='(%s) $\\omega_%d$' % (sub_label[i],(i+1)), loc='right')
         # subplots[i].set_ylim(-.4,-.37)
         # subplots[i].set_xlim(1.9,2.8)
         subplots[i].set_ylim(-1,1)
@@ -408,7 +418,8 @@ def eig_vec_schematic():
     figure, subplots = pyplot.subplots(7)
     figure.set_figheight(28)
     figure.set_figwidth(6)
-    magnets.load_state(2.1, down=True)
+    # magnets.load_state(2.1, down=True)
+    magnets.load_state(1000.1)
     named_eigs = magnets.labeled_spectra_mono()
     equilib = magnets.state[:7]
     for index in range(7):
@@ -466,11 +477,11 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
     return
 
 if __name__ == '__main__':
-    eigen_vec_drift_plot()
+    # eigen_vec_drift_plot()
     # eigen_val_drift_plot(cached=True)
     # vec_drift_mono()
     # vec_drift_mono(cached=True)
     # val_drift_mono(cached=True)
     # val_drift_mono()
-    # eig_vec_schematic()
+    eig_vec_schematic()
     # mono_mode1()
