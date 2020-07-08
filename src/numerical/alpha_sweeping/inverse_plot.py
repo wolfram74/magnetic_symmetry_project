@@ -23,7 +23,7 @@ def val_drift_mono(cached =False):
     log_plot = False
     running = True
     last = False
-    OMEGAS = [0.1815, 1.3229, 1.3229, 2.0000, 1.9126, 1.3229, 10.5203]
+    OMEGAS = [0.1815, 1.3229, 1.3229, 1.3229, 1.9126, 2.0000, 10.5203]
     figure, subplots = pyplot.subplots(1)
     figure.set_figheight(6)
     figure.set_figwidth(6)
@@ -32,10 +32,10 @@ def val_drift_mono(cached =False):
     subplots.set_xlabel('$1/\\alpha$', fontsize=16)
     subplots.set_xlim(0,1/magnets.alpha)
     # subplots.set_ylabel('$\\frac{\\omega^2/\\alpha}{\Omega_i^2}$', fontsize=16)
-    subplots.set_ylabel('$\\omega^2/\\alpha$', fontsize=16)
+    subplots.set_ylabel('$R_i$', fontsize=16)
 
     if not log_plot:
-        subplots.set_ylim(0,4)
+        subplots.set_ylim(0,2.5)
     if cached:
         alphas, e_vecs, eigen_drifting = cache_poly_load(source='mono')
     # while 1./magnets.alpha > u_min and not cached:
@@ -68,12 +68,12 @@ def val_drift_mono(cached =False):
             subplots.plot(u_vals, numpy.log10(scaled))
         else:
             # subplots.plot(alphas, curve)
-            # scaled = curve*(u_vals)/OMEGAS[i]
-            scaled = curve*(u_vals)
+            scaled = curve*(u_vals)/OMEGAS[i]
+            # scaled = curve*(u_vals)
             # scaled = numpy.sqrt(curve*(u_vals))
             subplots.plot(u_vals, scaled)
             # subplots.plot(numpy.log10(u_vals), scaled)
-    val_mono_annotate(subplots)
+    # val_mono_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
     pyplot.savefig(time_label+'-freqs_mono_vs_u.png', bbox_inches='tight')
 

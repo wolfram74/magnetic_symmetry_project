@@ -63,8 +63,8 @@ def eigen_vec_drift_plot(cached = True):
     figure.set_figwidth(6)
     magnets.load_state(.01)
     pyplot.subplots_adjust(hspace=.3)
-    markers = [' ',' ',' ',' ', 'x', 'x', 'x']
     marker_size = []
+    markers = [' ',' ',' ',' ', 'x', 'x', 'x']
     styles = ['-','--', '--','--', ' ',' ', ' ']
     colors = ['k','r', 'g', 'b', 'r', 'b','g']
     a_max = 2.48
