@@ -1,7 +1,10 @@
 import system
 from matplotlib import pyplot
+import matplotlib.gridspec as gridspec
+
 import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
+
 import time
 
 import numpy
@@ -415,22 +418,29 @@ def mono_mode1():
 
 
 def eig_vec_schematic():
-    figure, subplots = pyplot.subplots(7)
-    figure.set_figheight(28)
-    figure.set_figwidth(6)
+    figure = pyplot.figure(1)
+    figure, subplots = pyplot.subplots(4,2)
+    figure.set_figheight(16)
+    figure.set_figwidth(8)
+    subplots[-1][-1].axis('off')
+    # dimensions = (4,2)
+    # gridspec.Gridspec(dimensions[0],dimensions[1])
     # magnets.load_state(2.1, down=True)
-    magnets.load_state(1000.1)
-    named_eigs = magnets.labeled_spectra_mono()
+    # named_eigs = magnets.labeled_spectra_mono()
+    magnets.load_state(1.5)
+    named_eigs = magnets.labeled_spectra()
     equilib = magnets.state[:7]
     for index in range(7):
         mode_ID = index+1
         mode = named_eigs[mode_ID]
+        row,col = index/2, index%2
         single_mode(
-            subplots[index], equilib, mode,
+            subplots[row][col], equilib, mode,
             magnets.alpha, mode_ID
             )
+    # figure.tight_layout()
     time_label = ("%d" % time.time())[-5:]
-    pyplot.savefig(time_label+'-eig_schematic.png')
+    pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
     return
 
 def single_mode(frame, gam_0, mode, alpha, mode_ID):
