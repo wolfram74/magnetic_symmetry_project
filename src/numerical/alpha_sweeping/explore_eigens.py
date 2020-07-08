@@ -418,12 +418,12 @@ def mono_mode1():
 
 
 def eig_vec_schematic():
-    figure = pyplot.figure(1)
-    figure, subplots = pyplot.subplots(4,2)
+    figure = pyplot.figure()
+    # figure, subplots = pyplot.subplots(4,2)
     figure.set_figheight(16)
     figure.set_figwidth(8)
-    subplots[-1][-1].axis('off')
-    # dimensions = (4,2)
+    # subplots[-1][-1].axis('off')
+    dimensions = (8,4)
     # gridspec.Gridspec(dimensions[0],dimensions[1])
     # magnets.load_state(2.1, down=True)
     # named_eigs = magnets.labeled_spectra_mono()
@@ -434,11 +434,20 @@ def eig_vec_schematic():
         mode_ID = index+1
         mode = named_eigs[mode_ID]
         row,col = index/2, index%2
+        if index !=6:
+            subplot = pyplot.subplot2grid(
+                (8,4), (row*2, col*2),rowspan=2, colspan=2
+                )
+        else:
+            subplot = pyplot.subplot2grid(
+                (8,4), (row*2, col*2+1),rowspan=2, colspan=2
+                )
         single_mode(
-            subplots[row][col], equilib, mode,
+            # subplots[row][col], equilib, mode,
+            subplot, equilib, mode,
             magnets.alpha, mode_ID
             )
-    # figure.tight_layout()
+    figure.tight_layout(pad=1.0)
     time_label = ("%d" % time.time())[-5:]
     pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
     return
