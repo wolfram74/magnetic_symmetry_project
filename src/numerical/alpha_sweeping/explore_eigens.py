@@ -427,7 +427,7 @@ def eig_vec_schematic():
     # gridspec.Gridspec(dimensions[0],dimensions[1])
     # magnets.load_state(2.1, down=True)
     # named_eigs = magnets.labeled_spectra_mono()
-    magnets.load_state(1.5)
+    magnets.load_state(1.3)
     named_eigs = magnets.labeled_spectra()
     equilib = magnets.state[:7]
     for index in range(7):
@@ -504,3 +504,25 @@ if __name__ == '__main__':
     # val_drift_mono()
     eig_vec_schematic()
     # mono_mode1()
+
+
+'''
+for variable definition schematic
+Xlabel all dipoles in schematic
+Xfor phi labeling, include magnetic moment vector
+Vector((1,0), (1+cos(ϕ_1),sin(ϕ_1)))ϕ_1
+Element( <List>, <Position of Element> )
+vecs = Sequence(Point({cos(Element(phis, i)), sin(Element(phis, i))}), i, 1, 5)
+Sequence(Point({cos(Element(phis, i)), sin(Element(phis, i))}), i, 1, 5)
+vecs = Sequence(i, i, 1,5)
+Point({cos(Element(phis,2)),sin(Element(phis,2))})
+Vector(Element(L_2,2), Element(L_2,2)+Element(vecs,1))
+Sequence(Vector(Element(L_2, i), Element(L_2, i)+Element(vecs, i-1)), i, 2, 6)
+If(abs(x)< 4, y=0)
+Sequence(Vector(Element(L_2, i), Element(L_2, i)+Element(phis, i-1)), i, 2, 6)
+Xdo the geometry for 6-1, theta_6,1, r_6,1
+Xlabel axes
+Xshorten axes
+Segment( Point({0, 4}),  Point({0,-4}]) )
+Xget rid of tick marks
+'''

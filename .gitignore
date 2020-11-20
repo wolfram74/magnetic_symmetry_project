@@ -107,3 +107,6 @@ venv.bak/
 *.png
 *.jpg
 *.mp4
+
+#old mac tracking
+*.DS_Store

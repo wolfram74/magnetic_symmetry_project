@@ -71,21 +71,23 @@ def val_drift_mono(cached =False):
             scaled = curve*(u_vals)/OMEGAS[i]
             # scaled = curve*(u_vals)
             # scaled = numpy.sqrt(curve*(u_vals))
-            subplots.plot(u_vals, scaled)
+            subplots.plot(u_vals, scaled, label='R_%d' % (i+1) )
             # subplots.plot(numpy.log10(u_vals), scaled)
-    # val_mono_annotate(subplots)
+    val_mono_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
+    #subplots.legend()
     pyplot.savefig(time_label+'-freqs_mono_vs_u.png', bbox_inches='tight')
 
 
 def val_mono_annotate(subplot):
-    subplot.annotate(s='$\\omega_1$', xy=(.05,.25))
-    subplot.annotate(s='$\\omega_2$', xy=(.1,.85))
-    subplot.annotate(s='$\\omega_3$', xy=(.1,1.176))
-    subplot.annotate(s='$\\omega_4$', xy=(.05,1.55))
-    subplot.annotate(s='$\\omega_5$', xy=(.05,1.725))
-    subplot.annotate(s='$\\omega_6$', xy=(.05,1.95))
-    subplot.annotate(s='$\\omega_7 \Uparrow$', xy=(.10,3.5))
+    print('labeling')
+    subplot.annotate(text='$R_1$', xy=(.8,1.9))
+    subplot.annotate(text='$R_2$', xy=(.75,.275))
+    subplot.annotate(text='$R_3$', xy=(.8,.575))
+    subplot.annotate(text='$R_4$', xy=(.6,2.))
+    subplot.annotate(text='$R_5$', xy=(.5,.875))
+    subplot.annotate(text='$R_6$', xy=(.8,1.2))
+    subplot.annotate(text='$R_7$', xy=(.4,1.05))
 
 
 if __name__=='__main__':
