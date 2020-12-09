@@ -459,13 +459,13 @@ def eig_vec_schematic():
             subplot, equilib, mode,
             magnets.alpha, mode_ID
             )
-    figure.tight_layout(pad=1.0)
+    figure.tight_layout(pad=.0)
     pyplot.subplots_adjust(top=.95)
     figure.suptitle('Eigenmodes for $\\alpha=%.3f$' % magnets.alpha,fontsize=24)
     time_label = ("%d" % time.time())[-5:]
     # pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
     pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
-    return
+        return
 
 def single_mode(frame, gam_0, mode, alpha, mode_ID):
     arrow_patches = []
@@ -473,6 +473,7 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
     title = (mode_ID)
     frame.set_ylim(-1.75,1.75)
     frame.set_xlim(-1.75,1.75)
+    frame.axis('off')
     for ind in range(7):
         phi0 = gam_0[ind]
         phi = mode[1][ind]
@@ -508,7 +509,7 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
         )
     frame.set_aspect('equal')
     frame.add_collection(shapes)
-    frame.set_title('$\\omega_%d$' % title,fontsize=16)
+    frame.set_title('$\\omega_%d$' % title,fontsize=20)
     return
 
 if __name__ == '__main__':
@@ -518,8 +519,8 @@ if __name__ == '__main__':
     # vec_drift_mono(cached=True)
     # val_drift_mono(cached=True)
     # val_drift_mono()
-    eig_vec_schematic()
-    # mono_mode1()
+    # eig_vec_schematic()
+            # mono_mode1()
 
 
 '''

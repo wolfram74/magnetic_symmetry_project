@@ -105,9 +105,35 @@ def making_plot(poly=True):
     styles = ['-','--', '--','--', ' ',' ', ' ']
     colors = ['k','r', 'g', 'b', 'r', 'b','g']
     sub_label = 'a b c d e f g h'.split(' ')
-    figure, subplots = pyplot.subplots(4,2)
-    figure.set_figheight(24)
-    figure.set_figwidth(12)
+    # figure, subplots = pyplot.subplots(4,2)
+    # figure.set_figheight(24)
+    # figure.set_figwidth(12)
+    # figure, subplots = pyplot.subplots(3,3)
+    # figure.set_figheight(18)
+    # figure.set_figwidth(18)
+    # figure.delaxes(subplots[2][2])
+    figure = pyplot.figure()
+    figure.set_figheight(18)
+    figure.set_figwidth(18)
+    dimen = (6,6)
+    subplots = []
+    for row in range(3):
+        row_arr = []
+        for col in range(3):
+            if row==2 and col==2:
+                break
+            ri, cj = 2*row, col*2
+            if row==2:
+                cj+=1
+            print(row,col,ri,cj)
+            row_arr.append(
+                pyplot.subplot2grid(
+                    dimen, (ri, cj),
+                    rowspan=2,colspan=2
+                    )
+                )
+        subplots.append(row_arr)
+
     vector_yaxis_label = '$\\delta \\phi$'
     vector_title_template = '(%s) $\\omega_%d$'
     print(len(subplots))
@@ -141,9 +167,11 @@ def making_plot(poly=True):
     # print(len(eigen_vecs), len(eigen_vecs[0]))
     # print(eigen_vecs[0][0])
     x_min, x_max = limit_sets(x_values)
+    y_axis_off = -.11
     subplots[0][0].set_xlabel(x_axis_label, fontsize=16)
-    subplots[0][0].set_ylabel(eig_val_yaxis)
+    subplots[0][0].set_ylabel(eig_val_yaxis, fontsize=16)
     subplots[0][0].set_ylim(0, eig_limit)
+    subplots[0][0].yaxis.set_label_coords(y_axis_off+.03, .5)
     subplots[0][0].set_title(
         label = eig_val_title,
         loc='right')
@@ -151,9 +179,9 @@ def making_plot(poly=True):
     for i in range(7):
         y_curve = [entry[i] for entry in eigen_vals]
         subplots[0][0].plot(x_values, y_curve)
-        row = (i+1)/2
-        col = (i+1)%2
-        print(row, col)
+        row = int((i+1)/3)
+        col = (i+1)%3
+        print(i, row, col, len(subplots[row]))
         subplots[row][col].set_title(
             label=vector_title_template % (sub_label[i+1],(i+1)),
             loc='right')
@@ -162,7 +190,7 @@ def making_plot(poly=True):
         subplots[row][col].set_xlabel(x_axis_label, fontsize=16)
         subplots[row][col].set_ylabel(vector_yaxis_label, fontsize=16)
         subplots[row][col].xaxis.set_label_coords(.5, -0.035)
-        subplots[row][col].yaxis.set_label_coords(-.0675, 0.5)
+        subplots[row][col].yaxis.set_label_coords(y_axis_off, .5)
 
         subplots[row][col].axhline(y=0,color='k',linestyle='--')
         subplots[row][col].grid(which='both', axis='x')
@@ -176,65 +204,67 @@ def making_plot(poly=True):
                 linestyle=styles[j],
                 marker=markers[j],
                 markevery=3, markersize=3
-                )
+                    )
 
     annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
+    pyplot.subplots_adjust(wspace=.45,hspace=.45)
     pyplot.savefig(time_label+'-kit_and_kabootle.png', bbox_inches='tight')
 
 def poly_annotate(subplots):
-    subplots[0][0].annotate(s='$\\omega_1$', xy=(1.0,.5**2))
-    subplots[0][0].annotate(s='$\\omega_2$', xy=(1.0,1.52**2))
-    subplots[0][0].annotate(s='$\\omega_3$', xy=(1.0,1.72**2))
-    subplots[0][0].annotate(s='$\\omega_4$', xy=(1.0,1.87**2))
-    subplots[0][0].annotate(s='$\\omega_5$', xy=(1.0,2.2**2))
-    subplots[0][0].annotate(s='$\\omega_6$', xy=(1.0,2.55**2))
-    subplots[0][0].annotate(s='$\\omega_7$', xy=(1.0,2.92**2))
+    fsize = 16
+    subplots[0][0].annotate(text='$\\omega_1$', xy=(1.0,.5**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_2$', xy=(1.0,1.52**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_3$', xy=(1.0,1.72**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_4$', xy=(1.0,1.87**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_5$', xy=(1.0,2.2**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_6$', xy=(1.0,2.55**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_7$', xy=(1.0,2.92**2),fontsize=fsize)
 
 
-    subplots[0][1].annotate(s='$\\phi_0$', xy=(.05,.9))
-    subplots[0][1].annotate(s='$\\phi_5,\\phi_6$', xy=(.25,.25))
-    subplots[0][1].annotate(s='$\\phi_1, \\phi_4$', xy=(1.0,0.1))
-    subplots[0][1].annotate(s='$\\phi_2, \\phi_3$', xy=(.5,-.3))
+    subplots[0][1].annotate(text='$\\phi_0$', xy=(.05,.9),fontsize=fsize)
+    subplots[0][1].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,.25),fontsize=fsize)
+    subplots[0][1].annotate(text='$\\phi_1, \\phi_4$', xy=(1.0,0.1),fontsize=fsize)
+    subplots[0][1].annotate(text='$\\phi_2, \\phi_3$', xy=(.5,-.3),fontsize=fsize)
 
-    subplots[1][0].annotate(s='$\\phi_0$', xy=(.1,.05))
-    subplots[1][0].annotate(s='$\\phi_5$', xy=(.5,.6))
-    subplots[1][0].annotate(s='$\\phi_4$', xy=(1.0,.40))
-    subplots[1][0].annotate(s='$\\phi_2$', xy=(.5,.2))
-    subplots[1][0].annotate(s='$\\phi_3$', xy=(.5,-.2))
-    subplots[1][0].annotate(s='$\\phi_1$', xy=(1.0,-.40))
-    subplots[1][0].annotate(s='$\\phi_6$', xy=(.5,-.65))
+    subplots[0][2].annotate(text='$\\phi_0$', xy=(.1,.05),fontsize=fsize)
+    subplots[0][2].annotate(text='$\\phi_5$', xy=(.5,.6),fontsize=fsize)
+    subplots[0][2].annotate(text='$\\phi_4$', xy=(1.0,.40),fontsize=fsize)
+    subplots[0][2].annotate(text='$\\phi_2$', xy=(.5,.2),fontsize=fsize)
+    subplots[0][2].annotate(text='$\\phi_3$', xy=(.5,-.2),fontsize=fsize)
+    subplots[0][2].annotate(text='$\\phi_1$', xy=(1.0,-.40),fontsize=fsize)
+    subplots[0][2].annotate(text='$\\phi_6$', xy=(.5,-.65),fontsize=fsize)
 
-    subplots[1][1].annotate(s='$\\phi_0$', xy=(.9,.05))
-    subplots[1][1].annotate(s='$\\phi_2$', xy=(.25,.60))
-    subplots[1][1].annotate(s='$\\phi_6$', xy=(.25,.35))
-    subplots[1][1].annotate(s='$\\phi_4$', xy=(.25,.15))
-    subplots[1][1].annotate(s='$\\phi_1$', xy=(.25,-.20))
-    subplots[1][1].annotate(s='$\\phi_5$', xy=(.25,-.40))
-    subplots[1][1].annotate(s='$\\phi_3$', xy=(.25,-.7))
+    subplots[1][0].annotate(text='$\\phi_0$', xy=(.9,.05),fontsize=fsize)
+    subplots[1][0].annotate(text='$\\phi_2$', xy=(.25,.60),fontsize=fsize)
+    subplots[1][0].annotate(text='$\\phi_6$', xy=(.25,.35),fontsize=fsize)
+    subplots[1][0].annotate(text='$\\phi_4$', xy=(.25,.15),fontsize=fsize)
+    subplots[1][0].annotate(text='$\\phi_1$', xy=(.25,-.20),fontsize=fsize)
+    subplots[1][0].annotate(text='$\\phi_5$', xy=(.25,-.40),fontsize=fsize)
+    subplots[1][0].annotate(text='$\\phi_3$', xy=(.25,-.7),fontsize=fsize)
 
-    subplots[2][0].annotate(s='$\\phi_0$', xy=(.05,.075))
-    subplots[2][0].annotate(s='$\\phi_5,\\phi_6$', xy=(.25,.4))
-    subplots[2][0].annotate(s='$\\phi_2, \\phi_3$', xy=(.25,.15))
-    subplots[2][0].annotate(s='$\\phi_1, \\phi_4$', xy=(.25,-0.5))
+    subplots[1][1].annotate(text='$\\phi_0$', xy=(.05,.075),fontsize=fsize)
+    subplots[1][1].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,.4),fontsize=fsize)
+    subplots[1][1].annotate(text='$\\phi_2, \\phi_3$', xy=(.25,.15),fontsize=fsize)
+    subplots[1][1].annotate(text='$\\phi_1, \\phi_4$', xy=(.25,-0.5),fontsize=fsize)
 
-    subplots[2][1].annotate(s='$\\phi_0$', xy=(.1,.1))
-    subplots[2][1].annotate(s='$\\phi_1$', xy=(.25,.65))
-    subplots[2][1].annotate(s='$\\phi_2$', xy=(.35,.38))
-    subplots[2][1].annotate(s='$\\phi_5$', xy=(.25,.13))
-    subplots[2][1].annotate(s='$\\phi_6$', xy=(.25,-.18))
-    subplots[2][1].annotate(s='$\\phi_3$', xy=(.35,-.43))
-    subplots[2][1].annotate(s='$\\phi_4$', xy=(.25,-.75))
+    subplots[1][2].annotate(text='$\\phi_0$', xy=(.1,.1),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_1$', xy=(.25,.65),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_2$', xy=(.35,.38),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_5$', xy=(.25,.13),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_6$', xy=(.25,-.18),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_3$', xy=(.35,-.43),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_4$', xy=(.25,-.75),fontsize=fsize)
 
-    subplots[3][0].annotate(s='$\\phi_0$', xy=(.8,.5))
-    subplots[3][0].annotate(s='$\\phi_2, \\phi_3$', xy=(.25,.5))
-    subplots[3][0].annotate(s='$\\phi_1, \\phi_4$', xy=(.25,-0.22))
-    subplots[3][0].annotate(s='$\\phi_5,\\phi_6$', xy=(.25,-.65))
+    subplots[2][0].annotate(text='$\\phi_0$', xy=(.8,.5),fontsize=fsize)
+    subplots[2][0].annotate(text='$\\phi_2, \\phi_3$', xy=(.25,.5),fontsize=fsize)
+    subplots[2][0].annotate(text='$\\phi_1, \\phi_4$', xy=(.25,-0.22),fontsize=fsize)
+    subplots[2][0].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,-.65),fontsize=fsize)
 
-    subplots[3][1].annotate(s='$\\phi_0$', xy=(.05,.075))
-    subplots[3][1].annotate(s='$\\phi_2, \\phi_3$', xy=(.75,.65))
-    subplots[3][1].annotate(s='$\\phi_1, \\phi_4$', xy=(1.2,0.3))
-    subplots[3][1].annotate(s='$\\phi_5,\\phi_6$', xy=(1.2,-.3))
+    subplots[2][1].annotate(text='$\\phi_0$', xy=(.05,.075),fontsize=fsize)
+    subplots[2][1].annotate(text='$\\phi_2, \\phi_3$', xy=(.75,.65),fontsize=fsize)
+    subplots[2][1].annotate(text='$\\phi_1, \\phi_4$', xy=(1.2,0.3),fontsize=fsize)
+    subplots[2][1].annotate(text='$\\phi_5,\\phi_6$', xy=(1.2,-.3),fontsize=fsize)
 
 def mono_annotate(subplots):
     subplots[0][0].annotate(s='$\\omega_1$', xy=(.05,.25))
@@ -243,7 +273,7 @@ def mono_annotate(subplots):
     subplots[0][0].annotate(s='$\\omega_4$', xy=(.05,1.55))
     subplots[0][0].annotate(s='$\\omega_5$', xy=(.05,1.725))
     subplots[0][0].annotate(s='$\\omega_6$', xy=(.05,1.95))
-    subplots[0][0].annotate(s='$\\omega_7 \Uparrow$', xy=(.10,3.5))
+    subplots[0][0].annotate(s='$\\omega_7 \\Uparrow$', xy=(.10,3.5))
 
     subplots[0][1].annotate(s='$\\phi_0$', xy=(.1,.5))
     subplots[0][1].annotate(s='$\\phi_1, \\phi_4$', xy=(.1,-0.2))
@@ -278,5 +308,5 @@ def mono_annotate(subplots):
     subplots[3][1].annotate(s='$\\phi_1, \\phi_4$', xy=(.1,-0.1))
 
 if __name__ == '__main__':
-    # making_plot()
-    making_plot(poly=False)
+    making_plot()
+    # making_plot(poly=False)
