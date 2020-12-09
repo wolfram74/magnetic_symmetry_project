@@ -420,11 +420,14 @@ def mono_mode1():
 def eig_vec_schematic():
     figure = pyplot.figure()
     # figure, subplots = pyplot.subplots(4,2)
-    figure.set_figheight(16)
-    figure.set_figwidth(8)
+    # figure.set_figheight(16)
+    # figure.set_figwidth(8)
+    # dimen = (8,4) #3x2+1
+    figure.set_figheight(20)
+    figure.set_figwidth(20)
+    dimen = (3,3) #2x3+1 of over all plot, not subplot size
     # subplots[-1][-1].axis('off')
-    dimensions = (8,4)
-    # gridspec.Gridspec(dimensions[0],dimensions[1])
+    # gridspec.Gridspec(dimen[0],dimen[1])
     # magnets.load_state(2.1, down=True)
     # named_eigs = magnets.labeled_spectra_mono()
     magnets.load_state(1.3)
@@ -433,14 +436,23 @@ def eig_vec_schematic():
     for index in range(7):
         mode_ID = index+1
         mode = named_eigs[mode_ID]
-        row,col = index/2, index%2
+        # row,col = int(index/2), index%2
+        row,col = int(index/3), index%3
+        loc = (row, col)
+        print(row, col, dimen, loc)
         if index !=6:
             subplot = pyplot.subplot2grid(
-                (8,4), (row*2, col*2),rowspan=2, colspan=2
+                # dimen, (row*2, col*2),rowspan=2, colspan=2
+                dimen,loc
+                # (row*(dimen[0]+1), col*(dimen[1]+1)),
+                # rowspan=dimen[0], colspan=dimen[1]
                 )
         else:
             subplot = pyplot.subplot2grid(
-                (8,4), (row*2, col*2+1),rowspan=2, colspan=2
+                # dimen, (row*2, col*2+1),rowspan=2, colspan=2
+                dimen,(2,1)
+                # (row*(dimen[0]+1), col*(dimen[1]+1)),
+                # rowspan=dimen[0], colspan=dimen[1]
                 )
         single_mode(
             # subplots[row][col], equilib, mode,
@@ -448,14 +460,17 @@ def eig_vec_schematic():
             magnets.alpha, mode_ID
             )
     figure.tight_layout(pad=1.0)
+    pyplot.subplots_adjust(top=.95)
+    figure.suptitle('Eigenmodes for $\\alpha=%.3f$' % magnets.alpha,fontsize=24)
     time_label = ("%d" % time.time())[-5:]
+    # pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
     pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
     return
 
 def single_mode(frame, gam_0, mode, alpha, mode_ID):
     arrow_patches = []
     colors = []
-    title = (mode_ID, alpha)
+    title = (mode_ID)
     frame.set_ylim(-1.75,1.75)
     frame.set_xlim(-1.75,1.75)
     for ind in range(7):
@@ -467,7 +482,8 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
         else:
             ci = [cos(tht0i), sin(tht0i)]
         arrow_patches.append(
-            mpatches.Rectangle(ci, .5, .005, 180*phi0/pi, fill=False)
+            mpatches.Rectangle(ci, .5, .01, 180*phi0/pi, 
+                fill=True)
             )
         arrow_patches.append(
             mpatches.Arrow(
@@ -482,7 +498,7 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
                 ci, radius=.5, alpha=.1, zorder = .5
                 )
             )
-        colors.append((.1,.5,.1, .5))
+        colors.append((.1,.1,.1, .75))
         colors.append((.1,.1,.5))
         colors.append((.5,.1,.1,.1))
 
@@ -492,7 +508,7 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
         )
     frame.set_aspect('equal')
     frame.add_collection(shapes)
-    frame.set_title('$\\omega_%d$, $\\alpha=%.3f$' % title)
+    frame.set_title('$\\omega_%d$' % title,fontsize=16)
     return
 
 if __name__ == '__main__':
