@@ -461,18 +461,18 @@ def eig_vec_schematic():
             )
     figure.tight_layout(pad=.0)
     pyplot.subplots_adjust(top=.95)
-    figure.suptitle('Eigenmodes for $\\alpha=%.3f$' % magnets.alpha,fontsize=24)
+    # figure.suptitle('Eigenmodes for $\\alpha=%.3f$' % magnets.alpha,fontsize=24)
     time_label = ("%d" % time.time())[-5:]
     # pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
-    pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
-        return
+    pyplot.savefig(time_label+('-eig_schematic-a=%.3f.png' % magnets.alpha),bbox_inches='tight')
+    return
 
 def single_mode(frame, gam_0, mode, alpha, mode_ID):
     arrow_patches = []
     colors = []
     title = (mode_ID)
-    frame.set_ylim(-1.75,1.75)
-    frame.set_xlim(-1.75,1.75)
+    frame.set_ylim(-1.5,1.5)
+    frame.set_xlim(-1.5,1.5)
     frame.axis('off')
     for ind in range(7):
         phi0 = gam_0[ind]
@@ -509,7 +509,7 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
         )
     frame.set_aspect('equal')
     frame.add_collection(shapes)
-    frame.set_title('$\\omega_%d$' % title,fontsize=20)
+    frame.set_title('$\\omega_%d$' % title, fontsize=20, y=.90)
     return
 
 if __name__ == '__main__':
@@ -519,7 +519,7 @@ if __name__ == '__main__':
     # vec_drift_mono(cached=True)
     # val_drift_mono(cached=True)
     # val_drift_mono()
-    # eig_vec_schematic()
+    eig_vec_schematic()
             # mono_mode1()
 
 
@@ -543,3 +543,4 @@ Xshorten axes
 Segment( Point({0, 4}),  Point({0,-4}]) )
 Xget rid of tick marks
 '''
+

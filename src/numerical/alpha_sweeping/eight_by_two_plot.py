@@ -171,6 +171,7 @@ def making_plot(poly=True):
     subplots[0][0].set_xlabel(x_axis_label, fontsize=16)
     subplots[0][0].set_ylabel(eig_val_yaxis, fontsize=16)
     subplots[0][0].set_ylim(0, eig_limit)
+    subplots[0][0].set_xlim(x_min, x_max)
     subplots[0][0].yaxis.set_label_coords(y_axis_off+.03, .5)
     subplots[0][0].set_title(
         label = eig_val_title,
@@ -213,13 +214,13 @@ def making_plot(poly=True):
 
 def poly_annotate(subplots):
     fsize = 16
-    subplots[0][0].annotate(text='$\\omega_1$', xy=(1.0,.5**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_2$', xy=(1.0,1.52**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_3$', xy=(1.0,1.72**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_4$', xy=(1.0,1.87**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_1$', xy=(1.0,.6**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_2$', xy=(1.0,1.54**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_3$', xy=(1.15,1.75**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_4$', xy=(.95,1.87**2),fontsize=fsize)
     subplots[0][0].annotate(text='$\\omega_5$', xy=(1.0,2.2**2),fontsize=fsize)
     subplots[0][0].annotate(text='$\\omega_6$', xy=(1.0,2.55**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_7$', xy=(1.0,2.92**2),fontsize=fsize)
+    subplots[0][0].annotate(text='$\\omega_7$', xy=(.90,2.92**2),fontsize=fsize)
 
 
     subplots[0][1].annotate(text='$\\phi_0$', xy=(.05,.9),fontsize=fsize)
@@ -248,11 +249,11 @@ def poly_annotate(subplots):
     subplots[1][1].annotate(text='$\\phi_2, \\phi_3$', xy=(.25,.15),fontsize=fsize)
     subplots[1][1].annotate(text='$\\phi_1, \\phi_4$', xy=(.25,-0.5),fontsize=fsize)
 
-    subplots[1][2].annotate(text='$\\phi_0$', xy=(.1,.1),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_0$', xy=(.1,.075),fontsize=fsize)
     subplots[1][2].annotate(text='$\\phi_1$', xy=(.25,.65),fontsize=fsize)
     subplots[1][2].annotate(text='$\\phi_2$', xy=(.35,.38),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_5$', xy=(.25,.13),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_6$', xy=(.25,-.18),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_5$', xy=(.3,.13),fontsize=fsize)
+    subplots[1][2].annotate(text='$\\phi_6$', xy=(.3,-.18),fontsize=fsize)
     subplots[1][2].annotate(text='$\\phi_3$', xy=(.35,-.43),fontsize=fsize)
     subplots[1][2].annotate(text='$\\phi_4$', xy=(.25,-.75),fontsize=fsize)
 
