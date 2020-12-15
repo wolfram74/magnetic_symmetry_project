@@ -1,5 +1,7 @@
 import system
 from matplotlib import pyplot
+from matplotlib import backend_bases
+from matplotlib import transforms
 import matplotlib.patches as mpatches
 from matplotlib.collections import PatchCollection
 import time
@@ -100,18 +102,13 @@ def load_mono_values():
 
     return inv_alphas, e_vals, eigen_drifting
 
-def making_plot(poly=True):
-    markers = [' ',' ',' ',' ', 'x', 'x', 'x']
-    styles = ['-','--', '--','--', ' ',' ', ' ']
-    colors = ['k','r', 'g', 'b', 'r', 'b','g']
-    sub_label = 'a b c d e f g h'.split(' ')
-    # figure, subplots = pyplot.subplots(4,2)
-    # figure.set_figheight(24)
-    # figure.set_figwidth(12)
-    # figure, subplots = pyplot.subplots(3,3)
-    # figure.set_figheight(18)
-    # figure.set_figwidth(18)
-    # figure.delaxes(subplots[2][2])
+def gen_fig_and_subplots(square=False):
+    if not square:
+        figure, subplots = pyplot.subplots(4,2)
+        figure.set_figheight(24)
+        figure.set_figwidth(12)
+        return figure,subplots
+
     figure = pyplot.figure()
     figure.set_figheight(18)
     figure.set_figwidth(18)
@@ -133,6 +130,20 @@ def making_plot(poly=True):
                     )
                 )
         subplots.append(row_arr)
+    return figure, subplots
+
+def making_plot(poly=True):
+    markers = [' ',' ',' ',' ', 'x', 'x', 'x']
+    styles = ['-','--', '--','--', ' ',' ', ' ']
+    colors = ['k','r', 'g', 'b', 'r', 'b','g']
+    sub_label = 'a b c d e f g h'.split(' ')
+    # figure, subplots = pyplot.subplots(4,2)
+    # figure.set_figheight(24)
+    # figure.set_figwidth(12)
+    # tick marks
+    #https://matplotlib.org/3.1.1/gallery/ticks_and_spines/tick-locators.html#sphx-glr-gallery-ticks-and-spines-tick-locators-py
+    square_layout = False
+    figure, subplots = gen_fig_and_subplots(square=square_layout)
 
     vector_yaxis_label = '$\\delta \\phi$'
     vector_title_template = '(%s) $\\omega_%d$'
@@ -162,14 +173,13 @@ def making_plot(poly=True):
     #x_values, 1-D list of alpha or 1/alpha
     #eigen values: same length as x_values, each entry 7 eigen values at that x-value
     # eigen_vecs: 7D list, one for each mode, x-value number of entries, of 7 vectors each
-    # print(len(x_values))
-    # print(len(eigen_vals), len(eigen_vals[0]))
-    # print(len(eigen_vecs), len(eigen_vecs[0]))
-    # print(eigen_vecs[0][0])
+
     x_min, x_max = limit_sets(x_values)
-    y_axis_off = -.11
-    subplots[0][0].set_xlabel(x_axis_label, fontsize=16)
-    subplots[0][0].set_ylabel(eig_val_yaxis, fontsize=16)
+    y_axis_off = -.06 #how shifted is the y axis label
+    yticks = (-1., -.5, 0, .5, 1.)
+    fontsize=20
+    subplots[0][0].set_xlabel(x_axis_label, fontsize=fontsize)
+    subplots[0][0].set_ylabel(eig_val_yaxis, fontsize=fontsize)
     subplots[0][0].set_ylim(0, eig_limit)
     subplots[0][0].set_xlim(x_min, x_max)
     subplots[0][0].yaxis.set_label_coords(y_axis_off+.03, .5)
@@ -180,18 +190,23 @@ def making_plot(poly=True):
     for i in range(7):
         y_curve = [entry[i] for entry in eigen_vals]
         subplots[0][0].plot(x_values, y_curve)
-        row = int((i+1)/3)
-        col = (i+1)%3
+        if square_layout:
+            row = int((i+1)/3)
+            col = (i+1)%3
+        else:
+            row = int((i+1)/2)
+            col = (i+1)%2
         print(i, row, col, len(subplots[row]))
         subplots[row][col].set_title(
             label=vector_title_template % (sub_label[i+1],(i+1)),
             loc='right')
         subplots[row][col].set_ylim(-1, 1)
         subplots[row][col].set_xlim(x_min, x_max)
-        subplots[row][col].set_xlabel(x_axis_label, fontsize=16)
-        subplots[row][col].set_ylabel(vector_yaxis_label, fontsize=16)
+        subplots[row][col].set_xlabel(x_axis_label, fontsize=fontsize)
+        subplots[row][col].set_ylabel(vector_yaxis_label, fontsize=fontsize)
         subplots[row][col].xaxis.set_label_coords(.5, -0.035)
         subplots[row][col].yaxis.set_label_coords(y_axis_off, .5)
+        subplots[row][col].set_yticks(yticks)
 
         subplots[row][col].axhline(y=0,color='k',linestyle='--')
         subplots[row][col].grid(which='both', axis='x')
@@ -207,65 +222,93 @@ def making_plot(poly=True):
                 markevery=3, markersize=3
                     )
 
-    annotate(subplots)
+    annotate(subplots, square=square_layout)
     time_label = ("%d" % time.time())[-5:]
-    pyplot.subplots_adjust(wspace=.45,hspace=.45)
-    pyplot.savefig(time_label+'-kit_and_kabootle.png', bbox_inches='tight')
+    # pyplot.subplots_adjust(wspace=.45,hspace=.45)
+    pyplot.tight_layout()
+    fig_dims = figure.get_size_inches()
+    topHalf = transforms.Bbox([[0,0],[fig_dims[0],fig_dims[1]/2]])
+    botHalf = transforms.Bbox([[0,fig_dims[1]/2],[fig_dims[0],fig_dims[1]]])
+    # below fails:  missing 1 required positional argument: 'renderer'
+    # print(figure.get_tightbbox())
+    # rendBase = backend_bases.RendererBase
+    # rendBase = figure.canvas.get_renderer()
+    # rawBbox = figure.get_tightbbox(renderer=rendBase)
+    # print(rawBbox.__dict__)
+    # print(rawBbox.__dict__.keys())
+    # print(rawBbox._bbox)
+    # print(rawBbox._bbox.__dict__)
+    # print(rawBbox._bbox[0][1])
+    # print(rawBbox._bbox[1][1])
+    # mid = (rawBbox._bbox[1][1]-rawBbox._bbox[0][1])/2+rawBbox._bbox[0][1]
+    # print(mid)
 
-def poly_annotate(subplots):
-    fsize = 16
-    subplots[0][0].annotate(text='$\\omega_1$', xy=(1.0,.6**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_2$', xy=(1.0,1.54**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_3$', xy=(1.15,1.75**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_4$', xy=(.95,1.87**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_5$', xy=(1.0,2.2**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_6$', xy=(1.0,2.55**2),fontsize=fsize)
-    subplots[0][0].annotate(text='$\\omega_7$', xy=(.90,2.92**2),fontsize=fsize)
+
+    #https://matplotlib.org/3.3.3/api/transformations.html#matplotlib.transforms.Bbox
+    # print(figure.get_tightbbox(renderer=rendBase))
+    print(topHalf, botHalf)
+    # pyplot.savefig(time_label+'-kit_and_kabootle.png', bbox_inches='tight')
+    pyplot.savefig(time_label+'-kit_and_kabootleA.png', bbox_inches=topHalf)
+    pyplot.savefig(time_label+'-kit_and_kabootleB.png', bbox_inches=botHalf)
+
+def poly_annotate(subplots, square=False):
+    fsize = 20
+    if square:
+        e=[(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1)]
+    else:
+        e=[(0,0),(0,1),(1,0),(1,1),(2,0),(2,1),(3,0),(3,1)]
+    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_1$', xy=(1.0,.6**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_2$', xy=(1.0,1.54**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_3$', xy=(1.15,1.75**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_4$', xy=(.95,1.87**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_5$', xy=(1.0,2.2**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_6$', xy=(1.0,2.55**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_7$', xy=(.90,2.92**2),fontsize=fsize)
 
 
-    subplots[0][1].annotate(text='$\\phi_0$', xy=(.05,.9),fontsize=fsize)
-    subplots[0][1].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,.25),fontsize=fsize)
-    subplots[0][1].annotate(text='$\\phi_1, \\phi_4$', xy=(1.0,0.1),fontsize=fsize)
-    subplots[0][1].annotate(text='$\\phi_2, \\phi_3$', xy=(.5,-.3),fontsize=fsize)
+    subplots[e[1][0]][e[1][1]].annotate(text='$\\phi_0$', xy=(.05,.9),fontsize=fsize)
+    subplots[e[1][0]][e[1][1]].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,.25),fontsize=fsize)
+    subplots[e[1][0]][e[1][1]].annotate(text='$\\phi_1, \\phi_4$', xy=(1.0,0.1),fontsize=fsize)
+    subplots[e[1][0]][e[1][1]].annotate(text='$\\phi_2, \\phi_3$', xy=(.5,-.3),fontsize=fsize)
 
-    subplots[0][2].annotate(text='$\\phi_0$', xy=(.1,.05),fontsize=fsize)
-    subplots[0][2].annotate(text='$\\phi_5$', xy=(.5,.6),fontsize=fsize)
-    subplots[0][2].annotate(text='$\\phi_4$', xy=(1.0,.40),fontsize=fsize)
-    subplots[0][2].annotate(text='$\\phi_2$', xy=(.5,.2),fontsize=fsize)
-    subplots[0][2].annotate(text='$\\phi_3$', xy=(.5,-.2),fontsize=fsize)
-    subplots[0][2].annotate(text='$\\phi_1$', xy=(1.0,-.40),fontsize=fsize)
-    subplots[0][2].annotate(text='$\\phi_6$', xy=(.5,-.65),fontsize=fsize)
+    subplots[e[2][0]][e[2][1]].annotate(text='$\\phi_0$', xy=(.1,.05),fontsize=fsize)
+    subplots[e[2][0]][e[2][1]].annotate(text='$\\phi_5$', xy=(.5,.6),fontsize=fsize)
+    subplots[e[2][0]][e[2][1]].annotate(text='$\\phi_4$', xy=(1.0,.40),fontsize=fsize)
+    subplots[e[2][0]][e[2][1]].annotate(text='$\\phi_2$', xy=(.5,.2),fontsize=fsize)
+    subplots[e[2][0]][e[2][1]].annotate(text='$\\phi_3$', xy=(.5,-.2),fontsize=fsize)
+    subplots[e[2][0]][e[2][1]].annotate(text='$\\phi_1$', xy=(1.0,-.40),fontsize=fsize)
+    subplots[e[2][0]][e[2][1]].annotate(text='$\\phi_6$', xy=(.5,-.65),fontsize=fsize)
 
-    subplots[1][0].annotate(text='$\\phi_0$', xy=(.9,.05),fontsize=fsize)
-    subplots[1][0].annotate(text='$\\phi_2$', xy=(.25,.60),fontsize=fsize)
-    subplots[1][0].annotate(text='$\\phi_6$', xy=(.25,.35),fontsize=fsize)
-    subplots[1][0].annotate(text='$\\phi_4$', xy=(.25,.15),fontsize=fsize)
-    subplots[1][0].annotate(text='$\\phi_1$', xy=(.25,-.20),fontsize=fsize)
-    subplots[1][0].annotate(text='$\\phi_5$', xy=(.25,-.40),fontsize=fsize)
-    subplots[1][0].annotate(text='$\\phi_3$', xy=(.25,-.7),fontsize=fsize)
+    subplots[e[3][0]][e[3][1]].annotate(text='$\\phi_0$', xy=(.9,.05),fontsize=fsize)
+    subplots[e[3][0]][e[3][1]].annotate(text='$\\phi_2$', xy=(.25,.60),fontsize=fsize)
+    subplots[e[3][0]][e[3][1]].annotate(text='$\\phi_6$', xy=(.25,.35),fontsize=fsize)
+    subplots[e[3][0]][e[3][1]].annotate(text='$\\phi_4$', xy=(.25,.15),fontsize=fsize)
+    subplots[e[3][0]][e[3][1]].annotate(text='$\\phi_1$', xy=(.25,-.20),fontsize=fsize)
+    subplots[e[3][0]][e[3][1]].annotate(text='$\\phi_5$', xy=(.25,-.40),fontsize=fsize)
+    subplots[e[3][0]][e[3][1]].annotate(text='$\\phi_3$', xy=(.25,-.7),fontsize=fsize)
 
-    subplots[1][1].annotate(text='$\\phi_0$', xy=(.05,.075),fontsize=fsize)
-    subplots[1][1].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,.4),fontsize=fsize)
-    subplots[1][1].annotate(text='$\\phi_2, \\phi_3$', xy=(.25,.15),fontsize=fsize)
-    subplots[1][1].annotate(text='$\\phi_1, \\phi_4$', xy=(.25,-0.5),fontsize=fsize)
+    subplots[e[4][0]][e[4][1]].annotate(text='$\\phi_0$', xy=(.05,.075),fontsize=fsize)
+    subplots[e[4][0]][e[4][1]].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,.4),fontsize=fsize)
+    subplots[e[4][0]][e[4][1]].annotate(text='$\\phi_2, \\phi_3$', xy=(.25,.15),fontsize=fsize)
+    subplots[e[4][0]][e[4][1]].annotate(text='$\\phi_1, \\phi_4$', xy=(.25,-0.5),fontsize=fsize)
 
-    subplots[1][2].annotate(text='$\\phi_0$', xy=(.1,.075),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_1$', xy=(.25,.65),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_2$', xy=(.35,.38),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_5$', xy=(.3,.13),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_6$', xy=(.3,-.18),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_3$', xy=(.35,-.43),fontsize=fsize)
-    subplots[1][2].annotate(text='$\\phi_4$', xy=(.25,-.75),fontsize=fsize)
+    subplots[e[5][0]][e[5][1]].annotate(text='$\\phi_0$', xy=(.1,.075),fontsize=fsize)
+    subplots[e[5][0]][e[5][1]].annotate(text='$\\phi_1$', xy=(.25,.65),fontsize=fsize)
+    subplots[e[5][0]][e[5][1]].annotate(text='$\\phi_2$', xy=(.35,.38),fontsize=fsize)
+    subplots[e[5][0]][e[5][1]].annotate(text='$\\phi_5$', xy=(.3,.13),fontsize=fsize)
+    subplots[e[5][0]][e[5][1]].annotate(text='$\\phi_6$', xy=(.3,-.18),fontsize=fsize)
+    subplots[e[5][0]][e[5][1]].annotate(text='$\\phi_3$', xy=(.35,-.43),fontsize=fsize)
+    subplots[e[5][0]][e[5][1]].annotate(text='$\\phi_4$', xy=(.25,-.75),fontsize=fsize)
 
-    subplots[2][0].annotate(text='$\\phi_0$', xy=(.8,.5),fontsize=fsize)
-    subplots[2][0].annotate(text='$\\phi_2, \\phi_3$', xy=(.25,.5),fontsize=fsize)
-    subplots[2][0].annotate(text='$\\phi_1, \\phi_4$', xy=(.25,-0.22),fontsize=fsize)
-    subplots[2][0].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,-.65),fontsize=fsize)
+    subplots[e[6][0]][e[6][1]].annotate(text='$\\phi_0$', xy=(.8,.5),fontsize=fsize)
+    subplots[e[6][0]][e[6][1]].annotate(text='$\\phi_2, \\phi_3$', xy=(.25,.5),fontsize=fsize)
+    subplots[e[6][0]][e[6][1]].annotate(text='$\\phi_1, \\phi_4$', xy=(.25,-0.22),fontsize=fsize)
+    subplots[e[6][0]][e[6][1]].annotate(text='$\\phi_5,\\phi_6$', xy=(.25,-.65),fontsize=fsize)
 
-    subplots[2][1].annotate(text='$\\phi_0$', xy=(.05,.075),fontsize=fsize)
-    subplots[2][1].annotate(text='$\\phi_2, \\phi_3$', xy=(.75,.65),fontsize=fsize)
-    subplots[2][1].annotate(text='$\\phi_1, \\phi_4$', xy=(1.2,0.3),fontsize=fsize)
-    subplots[2][1].annotate(text='$\\phi_5,\\phi_6$', xy=(1.2,-.3),fontsize=fsize)
+    subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_0$', xy=(.05,.075),fontsize=fsize)
+    subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_2, \\phi_3$', xy=(.75,.65),fontsize=fsize)
+    subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_1, \\phi_4$', xy=(1.2,0.3),fontsize=fsize)
+    subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_5,\\phi_6$', xy=(1.2,-.3),fontsize=fsize)
 
 def mono_annotate(subplots):
     subplots[0][0].annotate(s='$\\omega_1$', xy=(.05,.25))
