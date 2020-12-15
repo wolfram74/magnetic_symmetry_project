@@ -227,27 +227,10 @@ def making_plot(poly=True):
     # pyplot.subplots_adjust(wspace=.45,hspace=.45)
     pyplot.tight_layout()
     fig_dims = figure.get_size_inches()
-    topHalf = transforms.Bbox([[0,0],[fig_dims[0],fig_dims[1]/2]])
-    botHalf = transforms.Bbox([[0,fig_dims[1]/2],[fig_dims[0],fig_dims[1]]])
-    # below fails:  missing 1 required positional argument: 'renderer'
-    # print(figure.get_tightbbox())
-    # rendBase = backend_bases.RendererBase
-    # rendBase = figure.canvas.get_renderer()
-    # rawBbox = figure.get_tightbbox(renderer=rendBase)
-    # print(rawBbox.__dict__)
-    # print(rawBbox.__dict__.keys())
-    # print(rawBbox._bbox)
-    # print(rawBbox._bbox.__dict__)
-    # print(rawBbox._bbox[0][1])
-    # print(rawBbox._bbox[1][1])
-    # mid = (rawBbox._bbox[1][1]-rawBbox._bbox[0][1])/2+rawBbox._bbox[0][1]
-    # print(mid)
-
-
+    topHalf = transforms.Bbox([[0,fig_dims[1]/2],[fig_dims[0],fig_dims[1]]])
+    botHalf = transforms.Bbox([[0,0],[fig_dims[0],fig_dims[1]/2]])
     #https://matplotlib.org/3.3.3/api/transformations.html#matplotlib.transforms.Bbox
-    # print(figure.get_tightbbox(renderer=rendBase))
     print(topHalf, botHalf)
-    # pyplot.savefig(time_label+'-kit_and_kabootle.png', bbox_inches='tight')
     pyplot.savefig(time_label+'-kit_and_kabootleA.png', bbox_inches=topHalf)
     pyplot.savefig(time_label+'-kit_and_kabootleB.png', bbox_inches=botHalf)
 
