@@ -509,7 +509,7 @@ def single_mode(frame, gam_0, mode, alpha, mode_ID):
         )
     frame.set_aspect('equal')
     frame.add_collection(shapes)
-    frame.set_title('$\\omega_%d$' % title, fontsize=20, y=.90)
+    frame.set_title('$\\omega_%d$' % title, fontsize=26, y=.975)
     return
 
 if __name__ == '__main__':
