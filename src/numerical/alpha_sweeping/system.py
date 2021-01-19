@@ -544,8 +544,8 @@ class System():
 '''
 colors:
 blue, green, red,
-teal, pink, yellow,
-black
+teal, pink, yellow,b
+lack
 mono modes currently labeled
 blue, green, red, V
 yellow, pink, teal,
