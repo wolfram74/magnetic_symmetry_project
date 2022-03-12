@@ -76,7 +76,7 @@ def val_drift_mono(cached =False):
     val_mono_annotate(subplots)
     time_label = ("%d" % time.time())[-5:]
     #subplots.legend()
-    pyplot.savefig(time_label+'-freqs_mono_vs_u.png', bbox_inches='tight')
+    pyplot.savefig(time_label+'-freqs_mono_vs_u.pdf', bbox_inches='tight')
 
 
 def val_mono_annotate(subplot):

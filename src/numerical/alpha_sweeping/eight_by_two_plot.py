@@ -12,6 +12,19 @@ pi, cos, sin = numpy.pi, numpy.cos, numpy.sin
 
 magnets = system.System()
 
+def build_line(alpha, equilib, modes):
+    print(alpha)
+    print(equilib)
+    print(modes[0])
+    line = "[%.9f," % alpha
+    line += "[%.9f,%.9f,%.9f,%.9f,%.9f,%.9f,%.9f],[" % tuple(equilib)
+    for mode in modes:
+        # print(mode)
+        line += "[%.9f, [%.9f,%.9f,%.9f,%.9f,%.9f,%.9f,%.9f]]," % tuple([mode[0]]+list(mode[1]) )
+    line +=']], \n'
+    return line
+
+
 def vectors_strip(array):
     #array of w^2 vector pairs
     #want 7 arrays of w^2 coord pairs
@@ -62,6 +75,24 @@ def load_poly_values():
         eigen_drifting[i].append(tidy_eigs[i+1][1])
     # print(len(alphas),len(e_vals))
     print(len(alphas),len(eigen_drifting), len(eigen_drifting[0]))
+
+    #JS caching block
+    cached_data = open('./low_hepta.js', 'w')
+    cached_data.write('var low_hepta_states = [\n')
+    for index in range(len(alphas)):
+        alpha = alphas[index]
+        magnets.load_state(alpha)
+        equilib = magnets.state[:7]
+        modes = []
+        for i in range(7):
+            modes.append([e_vals[index][i], eigen_drifting[i][index]])
+        entry = build_line(alpha, equilib, modes)
+        cached_data.write(entry)
+
+
+
+    #end block
+
     return alphas, e_vals, eigen_drifting
 
 def load_mono_values():
@@ -71,7 +102,6 @@ def load_mono_values():
     inv_alphas = []
     e_vals = []
     eigen_drifting = [[] for i in range(7)]
-
     running = True
     last = False
     u_min = 10**-3
@@ -80,6 +110,8 @@ def load_mono_values():
     u = 1/magnets.alpha
     OMEGAS = [0.1815, 1.3229, 1.3229, 2.0000, 1.9126, 1.3229, 10.5203]
 
+    # cached_data = open('./high_hepta.js', 'w')
+    # cached_data.write('var high_hepta_states = [\n')
 
     while running:
         inv_alphas.append(1/magnets.alpha)
@@ -88,6 +120,17 @@ def load_mono_values():
         e_vals.append(omegs)
         for i in range(7):
             eigen_drifting[i].append(tidy_eigs[i+1][1])
+
+        # #caching block
+        # alpha = magnets.alpha
+        # equilib = magnets.state[:7]
+        # modes = []
+        # for i in range(7):
+        #     modes.append([omegs[i], eigen_drifting[i][-1]])
+        # entry = build_line(alpha, equilib, modes)
+        # cached_data.write(entry)
+        # #end caching block
+
         if u < u_min and last:
             break
         if magnets.alpha < 5.:
@@ -101,6 +144,7 @@ def load_mono_values():
         if u < u_min:
             last=True
 
+    # close(cached_data)
     return inv_alphas, e_vals, eigen_drifting
 
 def gen_fig_and_subplots(square=False):
@@ -160,8 +204,8 @@ def making_plot(poly=True):
         y_axis_off = -.08 #how shifted is the y axis label
         y_axis_0 = 0.03
         x_axis_off =  -0.035 #how shifted is the x axis label
-        eig_val_yaxis = '$\\omega_i^2$'
-        eig_val_title = '(a) $\\omega^2$ vs. $\\alpha$'
+        eig_val_yaxis = '$\\omega_i^2 \\Omega^{-2}$'
+        eig_val_title = '(a) $\\omega^2 \\Omega^{-2}$ vs. $\\alpha$'
         get_values = load_poly_values
         eig_limit = 10
         limit_sets = lambda x: (0, x[-1])
@@ -173,7 +217,7 @@ def making_plot(poly=True):
         y_axis_off = -.09 #how shifted is the y axis label
         y_axis_0 = -0.00
         x_axis_off = -.055 #how shifted is the x axis label
-        eig_val_yaxis = '$\\omega^2 \\alpha^{-1}$'
+        eig_val_yaxis = '$\\omega^2 \\alpha^{-1} \\Omega^{-2}$'
         eig_val_title = '(a) $\\omega^2 \\alpha^{-1}$ vs. $\\alpha^{-1}$'
         eig_limit = 4
         limit_sets = lambda x: (x[-1], x[0])
@@ -245,27 +289,27 @@ def making_plot(poly=True):
     #https://matplotlib.org/3.3.3/api/transformations.html#matplotlib.transforms.Bbox
     print(topHalf, botHalf)
     # print(rcParams)
-    pyplot.savefig(time_label+('-%s-kit_and_kabootleB.png' % prefix), bbox_inches=botHalf)
+    pyplot.savefig(time_label+('-%s-kit_and_kabootleB.pdf' % prefix), bbox_inches=botHalf)
     for i in range(4,8):
         print(int(i/2), i%2)
         newt = subplots[int(i/2)][i%2].set_title(label=' ', loc='right')
         print(newt)
-    pyplot.savefig(time_label+('-%s-kit_and_kabootleA.png' % prefix), bbox_inches=topHalf)
+    pyplot.savefig(time_label+('-%s-kit_and_kabootleA.pdf' % prefix), bbox_inches=topHalf)
     # pyplot.savefig(time_label+('-%s-kit_and_kabootle_all.png' % prefix))
 
 def poly_annotate(subplots, square=False):
-    fsize = 18
+    fsize = 16
     if square:
         e=[(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1)]
     else:
         e=[(0,0),(0,1),(1,0),(1,1),(2,0),(2,1),(3,0),(3,1)]
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_1$', xy=(1.0,.6**2),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_2$', xy=(.75,1.52**2),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_3$', xy=(1.25,1.75**2),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_4$', xy=(.95,1.87**2),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_5$', xy=(1.0,2.2**2),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_6$', xy=(1.0,2.55**2),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_7$', xy=(.90,2.92**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$1$', xy=(1.0,.6**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$2$', xy=(.75,1.52**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$3$', xy=(1.25,1.75**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$4$', xy=(.95,1.87**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$5$', xy=(1.0,2.2**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$6$', xy=(1.0,2.55**2),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$7$', xy=(.90,2.92**2),fontsize=fsize)
 
 
     subplots[e[1][0]][e[1][1]].annotate(text='$\\phi_0$', xy=(.05,.9),fontsize=fsize)
@@ -313,20 +357,20 @@ def poly_annotate(subplots, square=False):
     subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_5,\\phi_6$', xy=(1.2,-.3),fontsize=fsize)
 
 def mono_annotate(subplots, square=False):
-    fsize = 20
+    fsize = 16
     if square:
         e=[(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1)]
     else:
         e=[(0,0),(0,1),(1,0),(1,1),(2,0),(2,1),(3,0),(3,1)]
 
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_1$', xy=(.05,.26),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_2$', xy=(.15,.57),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_3$', xy=(.15,1.156),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_4$', xy=(.275,2.1),fontsize=fsize)
-    # subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_5$', xy=(.025,1.67),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_5$', xy=(.5,1.67),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_6$', xy=(.025,2.1),fontsize=fsize)
-    subplots[e[0][0]][e[0][1]].annotate(text='$\\omega_7 \\Uparrow$', xy=(.10,3.5),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$1$', xy=(.05,.26),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$2$', xy=(.15,.57),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$3$', xy=(.15,1.156),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$4$', xy=(.275,2.1),fontsize=fsize)
+    # subplots[e[0][0]][e[0][1]].annotate(text='$5$', xy=(.025,1.67),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$5$', xy=(.5,1.67),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$6$', xy=(.025,2.1),fontsize=fsize)
+    subplots[e[0][0]][e[0][1]].annotate(text='$7 \\Uparrow$', xy=(.10,3.5),fontsize=fsize)
 
     subplots[e[1][0]][e[1][1]].annotate(text='$\\phi_0$', xy=(.1,.5),fontsize=fsize)
     subplots[e[1][0]][e[1][1]].annotate(text='$\\phi_1, \\phi_4$', xy=(.1,-0.2),fontsize=fsize)
@@ -361,5 +405,6 @@ def mono_annotate(subplots, square=False):
     subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_1, \\phi_4$', xy=(.1,-0.1),fontsize=fsize)
 
 if __name__ == '__main__':
-    # making_plot()
+    making_plot()
     making_plot(poly=False)
+

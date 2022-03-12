@@ -464,7 +464,7 @@ def eig_vec_schematic():
     # figure.suptitle('Eigenmodes for $\\alpha=%.3f$' % magnets.alpha,fontsize=24)
     time_label = ("%d" % time.time())[-5:]
     # pyplot.savefig(time_label+'-eig_schematic.png',bbox_inches='tight')
-    pyplot.savefig(time_label+('-eig_schematic-a=%.3f.png' % magnets.alpha),bbox_inches='tight')
+    pyplot.savefig(time_label+('-eig_schematic-a=%.3f.pdf' % magnets.alpha),bbox_inches='tight')
     return
 
 def single_mode(frame, gam_0, mode, alpha, mode_ID):

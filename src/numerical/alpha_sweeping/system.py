@@ -80,6 +80,7 @@ class System():
             delta[i] = state[i+7]
             return delta
         strength = self.dipole_strength(i)*self.dipole_strength(j)
+        #sign maintained because swapping i,j on t1 inverts sign due to oddness
         t1 = sin(state[i] - state[j])
         t2 = 3.*sin(state[i]+state[j]-2*self.theta_vals[i][j])
         r3 = self.r_vals[i][j]**(-3)
@@ -221,7 +222,6 @@ class System():
         changes = self.total_force()
         return sum( (changes**2) )
 
-
     def net_dipole_moment(self):
         moment = numpy.zeros(2)
         for i in range(7):
@@ -241,6 +241,40 @@ class System():
         direction[0] = cos(self.state[i])
         direction[1] = sin(self.state[i])
         return self.dipole_strength(i)*direction
+
+    def mag_field_of_i_at(self, xyz, i):
+        # print(xyz, i)
+        xyz = numpy.array(xyz)
+        mu_vec = numpy.append(self.mag_moment_i(i),0.)
+        xyz_0 = numpy.array(self.location_of_i(i))
+        r_vec = xyz-xyz_0
+        r_mag = numpy.linalg.norm(r_vec)
+        r_hat = r_vec/r_mag
+        mu_dot_r = numpy.dot(r_hat, mu_vec)
+        numer = 3.*mu_dot_r*r_hat-mu_vec
+        denom = 2*r_mag**3
+        # print(r_vec, r_mag, r_hat)
+        # print(numer, denom)
+        return numer/denom
+
+    def total_field_at(self, xyz):
+        Bvec = numpy.zeros(3)
+        for i in range(7):
+            Bvec+=self.mag_field_of_i_at(xyz, i)
+        B_mag = numpy.linalg.norm(Bvec)
+        B_hat = Bvec/B_mag
+
+        return B_hat, B_mag
+
+    def location_of_i(self,i):
+
+        location = [0,0,0] 
+        if i == 0:
+            return location
+        tht = (float(i-1)/6.)*2.*pi
+        location[0] = cos(tht)
+        location[1] = sin(tht)
+        return location
 
     def lim_U(self):
         limit = -13.8440856265381*self.alpha

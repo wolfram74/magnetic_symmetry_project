@@ -30,6 +30,7 @@ def force_equations():
 
     total_U = parse_U_bin()
     sympy.pprint(total_U)
+    print(sympy.latex(total_U.diff(phis[0])))
     # total_U = sympy.simplify(total_U)
     # sympy.pprint(total_U)
     phi_dots = []
@@ -109,7 +110,7 @@ def limit_U():
 
 if __name__=='__main__':
     # bulk_evals()
-    # force_equations()
+    force_equations()
     # cart_force_equations()
     # U_eval()
-    limit_U()
+    # limit_U()
