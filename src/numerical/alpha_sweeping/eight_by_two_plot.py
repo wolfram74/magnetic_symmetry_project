@@ -24,7 +24,6 @@ def build_line(alpha, equilib, modes):
     line +=']], \n'
     return line
 
-
 def vectors_strip(array):
     #array of w^2 vector pairs
     #want 7 arrays of w^2 coord pairs
@@ -38,8 +37,6 @@ def vectors_strip(array):
 
 def deltA_from_deltU(alpha, deltU):
     return -deltU*alpha**2/(1.+deltU*alpha)
-
-
 
 def load_poly_values():
     source = 'poly'
@@ -77,17 +74,17 @@ def load_poly_values():
     print(len(alphas),len(eigen_drifting), len(eigen_drifting[0]))
 
     #JS caching block
-    cached_data = open('./low_hepta.js', 'w')
-    cached_data.write('var low_hepta_states = [\n')
-    for index in range(len(alphas)):
-        alpha = alphas[index]
-        magnets.load_state(alpha)
-        equilib = magnets.state[:7]
-        modes = []
-        for i in range(7):
-            modes.append([e_vals[index][i], eigen_drifting[i][index]])
-        entry = build_line(alpha, equilib, modes)
-        cached_data.write(entry)
+    # cached_data = open('./low_hepta.js', 'w')
+    # cached_data.write('var low_hepta_states = [\n')
+    # for index in range(len(alphas)):
+    #     alpha = alphas[index]
+    #     magnets.load_state(alpha)
+    #     equilib = magnets.state[:7]
+    #     modes = []
+    #     for i in range(7):
+    #         modes.append([e_vals[index][i], eigen_drifting[i][index]])
+    #     entry = build_line(alpha, equilib, modes)
+    #     cached_data.write(entry)
 
 
 
@@ -96,6 +93,7 @@ def load_poly_values():
     return alphas, e_vals, eigen_drifting
 
 def load_mono_values():
+    from high_hepta import high_hepta_states
     #x_values, 1-D list of alpha or 1/alpha
     #eigen values: same length as x_values, each entry 7 eigen values at that x-value
     # eigen_vecs: 7D list, one for each mode, x-value number of entries, of 7 vectors each
@@ -112,6 +110,15 @@ def load_mono_values():
 
     # cached_data = open('./high_hepta.js', 'w')
     # cached_data.write('var high_hepta_states = [\n')
+
+    for line in high_hepta_states:
+        inv_alphas.append(1/line[0])
+        omegs = [el[0] for el in line[2]]
+        e_vals.append(omegs)
+        for i in range(7):
+            eigen_drifting[i].append(line[2][i][1])
+
+    return inv_alphas, e_vals, eigen_drifting
 
     while running:
         inv_alphas.append(1/magnets.alpha)
@@ -216,7 +223,7 @@ def making_plot(poly=True):
         x_axis_label = '$\\alpha^{-1}$'
         y_axis_off = -.09 #how shifted is the y axis label
         y_axis_0 = -0.00
-        x_axis_off = -.055 #how shifted is the x axis label
+        x_axis_off = -.155 #how shifted is the x axis label
         eig_val_yaxis = '$\\omega^2 \\alpha^{-1} \\Omega^{-2}$'
         eig_val_title = '(a) $\\omega^2 \\alpha^{-1}$ vs. $\\alpha^{-1}$'
         eig_limit = 4
@@ -236,7 +243,7 @@ def making_plot(poly=True):
     subplots[0][0].set_ylabel(eig_val_yaxis, fontsize=fontsize)
     subplots[0][0].set_ylim(0, eig_limit)
     subplots[0][0].set_xlim(x_min, x_max)
-    subplots[0][0].xaxis.set_label_coords(.5, x_axis_off)
+    subplots[0][0].xaxis.set_label_coords(.55, x_axis_off)
     subplots[0][0].yaxis.set_label_coords(y_axis_off+y_axis_0, .5)
     subplots[0][0].tick_params(axis='both', labelsize=14)
     subplots[0][0].set_title(
@@ -404,7 +411,206 @@ def mono_annotate(subplots, square=False):
     subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_2, \\phi_3,\\phi_5,\\phi_6$', xy=(.1,.3),fontsize=fsize)
     subplots[e[7][0]][e[7][1]].annotate(text='$\\phi_1, \\phi_4$', xy=(.1,-0.1),fontsize=fsize)
 
-if __name__ == '__main__':
-    making_plot()
-    making_plot(poly=False)
+def making_7x1_plot(poly=True):
+    markers = [' ',' ',' ',' ', 'x', 'x', 'x']
+    styles = ['-','--', '--','--', ' ',' ', ' ']
+    colors = ['k','r', 'g', 'b', 'r', 'b','g']
+    sub_label = 'a b c d e f g'.split(' ')
+    pyplot.rc('xtick', labelsize=14)
+    pyplot.rc('ytick', labelsize=14)
+    # tick marks
+    #https://matplotlib.org/3.1.1/gallery/ticks_and_spines/tick-locators.html#sphx-glr-gallery-ticks-and-spines-tick-locators-py
+    figure, subplots = gen_fig_and_subplot_line(poly)
 
+    vector_yaxis_label = '$\\delta \\phi$'
+    # vector_title_template = '(%s)\n $\\omega_%d$'
+    vector_title_template = '(%s) $\\omega_%d$'
+
+    if poly:
+        print('poly mode')
+        prefix = 'poly'
+        x_axis_label = '$\\alpha$'
+        y_axis_off = -.08 #how shifted is the y axis label
+        y_axis_0 = 0.03
+        x_axis_off =  -0.035 #how shifted is the x axis label
+        get_values = load_poly_values
+        limit_sets = lambda x: (0, x[-1])
+        annotate = poly_annotate_linear
+    else:
+        print('mono mode')
+        prefix = 'mono'
+        x_axis_label = '$\\alpha^{-1}$'
+        y_axis_off = -.13 #how shifted is the y axis label
+        y_axis_0 = -0.00
+        x_axis_off = -.155 #how shifted is the x axis label
+        limit_sets = lambda x: (x[-1], x[0])
+        get_values = load_mono_values
+        annotate = mono_annotate_linear
+
+    x_values, eigen_vals, eigen_vecs = get_values()
+    #x_values, 1-D list of alpha or 1/alpha
+    #eigen values: same length as x_values, each entry 7 eigen values at that x-value
+    # eigen_vecs: 7D list, one for each mode, x-value number of entries, of 7 vectors each
+
+    x_min, x_max = limit_sets(x_values)
+    # yticks = (-1., -.5, 0, .5, 1.)
+    yticks = ( -.5, 0, .5)
+    fontsize=20
+    subplots[6].set_xlabel(x_axis_label, fontsize=fontsize)
+    subplots[6].xaxis.set_label_coords(.5, x_axis_off)
+
+    for i in range(7):
+        subplots[i].set_title(
+            label=vector_title_template % (sub_label[i],(i+1)),
+            # loc='left',
+            fontsize=fontsize, #x=1.08, y=.625
+            # position=(0.10,1.0 ), #at the top, good x location
+            # position=(0.10, 0.0 ), #identical y location
+            position=(0.10, 0.0 ), y=0.0 
+            # pad=-25.
+            )
+        subplots[i].set_ylim(-1, 1)
+        subplots[i].set_xlim(x_min, x_max)
+        subplots[i].set_ylabel(
+            # vector_yaxis_label + ', ' + vector_title_template % (sub_label[i],(i+1))
+            vector_yaxis_label
+            ,fontsize=fontsize)
+        subplots[i].yaxis.set_label_coords(y_axis_off, .5)
+        subplots[i].set_yticks(yticks)
+
+        subplots[i].axhline(y=0,color='k',linestyle='--')
+        # subplots[row][col].grid(which='both', axis='x')
+
+
+        for j in range(7):
+            line = [entry[j] for entry in eigen_vecs[i]]
+            subplots[i].plot(
+                x_values, line,
+                color = colors[j],
+                linestyle=styles[j],
+                marker=markers[j],
+                markevery=3, markersize=3
+                    )
+
+    annotate(subplots) #todo annotations
+    time_label = ("%d" % time.time())[-5:]
+    pyplot.tight_layout()
+    rcParams["figure.constrained_layout.hspace"] = 0
+    rcParams["figure.constrained_layout.h_pad"] = 0
+    # pyplot.autoscale(enable=True, axis='y', tight=True)
+    # figure.subplots_adjust(
+    #     top=0.99,
+    #     bottom=0.01,
+    #     left=0.15,
+    #     right=0.90,
+    #     # hspace=-.5
+    #     )
+    # pyplot.subplot_tool()
+    # pyplot.show()
+    figure.subplots_adjust(hspace=0.0)
+    pyplot.savefig(time_label+('-%s-vectors_line.pdf' % prefix))
+
+def gen_fig_and_subplot_line(poly):
+    L=6
+    figure, axes = pyplot.subplots(nrows=7, ncols=1, sharex=True,
+        # constrained_layout=True
+        )
+    figure.set_figheight(L*3.5)
+    figure.set_figwidth(L)
+    # for axis in axes:
+    #     axis.set_aspect(.5)
+    #     if not poly:
+    #         axis.set_aspect(.25)
+    return figure, axes
+
+def poly_annotate_linear(subplots):
+    fsize = 16
+
+    subplots[0].annotate(text='$0$', xy=(.05,.8),fontsize=fsize)
+    subplots[0].annotate(text='$5,6$', xy=(.25,.25),fontsize=fsize)
+    subplots[0].annotate(text='$1, 4$', xy=(2.,-0.4),fontsize=fsize)
+    subplots[0].annotate(text='$2, 3$', xy=(.5,-.5),fontsize=fsize)
+
+    subplots[1].annotate(text='$0$', xy=(.1,.05),fontsize=fsize)
+    subplots[1].annotate(text='$5$', xy=(.5,.6),fontsize=fsize)
+    subplots[1].annotate(text='$4$', xy=(1.0,.38),fontsize=fsize)
+    subplots[1].annotate(text='$2$', xy=(.5,.1),fontsize=fsize)
+    subplots[1].annotate(text='$3$', xy=(.5,-.21),fontsize=fsize)
+    subplots[1].annotate(text='$1$', xy=(1.0,-.44),fontsize=fsize)
+    subplots[1].annotate(text='$6$', xy=(.5,-.75),fontsize=fsize)
+
+    subplots[2].annotate(text='$0$', xy=(1,.05),fontsize=fsize)
+    subplots[2].annotate(text='$2$', xy=(.25,.60),fontsize=fsize)
+    subplots[2].annotate(text='$6$', xy=(.15,.27),fontsize=fsize)
+    subplots[2].annotate(text='$4$', xy=(.25,.15),fontsize=fsize)
+    subplots[2].annotate(text='$1$', xy=(.25,-.24),fontsize=fsize)
+    subplots[2].annotate(text='$5$', xy=(.15,-.40),fontsize=fsize)
+    subplots[2].annotate(text='$3$', xy=(.25,-.72),fontsize=fsize)
+
+    subplots[3].annotate(text='$0$', xy=(1.,-.3),fontsize=fsize)
+    subplots[3].annotate(text='$5,6$', xy=(.25,.4),fontsize=fsize)
+    subplots[3].annotate(text='$2, 3$', xy=(1.5,.4),fontsize=fsize)
+    subplots[3].annotate(text='$1, 4$', xy=(.25,-0.5),fontsize=fsize)
+
+    subplots[4].annotate(text='$0$', xy=(.1,.075),fontsize=fsize)
+    subplots[4].annotate(text='$1$', xy=(.25,.65),fontsize=fsize)
+    subplots[4].annotate(text='$2$', xy=(.35,.38),fontsize=fsize)
+    subplots[4].annotate(text='$5$', xy=(.5,.03),fontsize=fsize)
+    subplots[4].annotate(text='$6$', xy=(.5,-.18),fontsize=fsize)
+    subplots[4].annotate(text='$3$', xy=(.35,-.5),fontsize=fsize)
+    subplots[4].annotate(text='$4$', xy=(.25,-.76),fontsize=fsize)
+
+    subplots[5].annotate(text='$0$', xy=(.8,.5),fontsize=fsize)
+    subplots[5].annotate(text='$2, 3$', xy=(.25,.5),fontsize=fsize)
+    subplots[5].annotate(text='$1, 4$', xy=(.25,-0.26),fontsize=fsize)
+    subplots[5].annotate(text='$5,6$', xy=(.25,-.71),fontsize=fsize)
+
+    subplots[6].annotate(text='$0$', xy=(.05,.075),fontsize=fsize)
+    subplots[6].annotate(text='$2, 3$', xy=(.75,.65),fontsize=fsize)
+    subplots[6].annotate(text='$1, 4$', xy=(1.2,0.3),fontsize=fsize)
+    subplots[6].annotate(text='$5,6$', xy=(1.2,-.33),fontsize=fsize)
+
+def mono_annotate_linear(subplots):
+    fsize = 16
+
+    subplots[0].annotate(text='$0$', xy=(.1,.5),fontsize=fsize)
+    subplots[0].annotate(text='$1, 4$', xy=(.1,-0.2),fontsize=fsize)
+    subplots[0].annotate(text='$2, 3,5,6$', xy=(.1,-.6),fontsize=fsize)
+
+    subplots[1].annotate(text='$0$', xy=(.4,.05),fontsize=fsize)
+    subplots[1].annotate(text='$2,5$', xy=(.2,.6),fontsize=fsize)
+    subplots[1].annotate(text='$1$', xy=(.05,.25),fontsize=fsize)
+    subplots[1].annotate(text='$4$', xy=(.05,-.30),fontsize=fsize)
+    subplots[1].annotate(text='$3,6$', xy=(.2,-.65),fontsize=fsize)
+
+    subplots[2].annotate(text='$0, 1, 4$', xy=(.1,.1),fontsize=fsize)
+    subplots[2].annotate(text='$2, 6$', xy=(.1,0.6),fontsize=fsize)
+    subplots[2].annotate(text='$3, 5$', xy=(.1,-.6),fontsize=fsize)
+
+    subplots[3].annotate(text='$0, 1, 4$', xy=(.1,.1),fontsize=fsize)
+    subplots[3].annotate(text='$2, 3$', xy=(.1,0.6),fontsize=fsize)
+    subplots[3].annotate(text='$5, 6$', xy=(.1,-.65),fontsize=fsize)
+
+    subplots[4].annotate(text='$0$', xy=(.1,.15),fontsize=fsize)
+    subplots[4].annotate(text='$1, 4$', xy=(.1,0.8),fontsize=fsize)
+    subplots[4].annotate(text='$2, 3,5,6$', xy=(.3,-.5),fontsize=fsize)
+
+    subplots[5].annotate(text='$0$', xy=(.3,.05),fontsize=fsize)
+    subplots[5].annotate(text='$1$', xy=(.1,.80),fontsize=fsize)
+    subplots[5].annotate(text='$3,6$', xy=(.1,.3),fontsize=fsize)
+    subplots[5].annotate(text='$2,5$', xy=(.1,-.35),fontsize=fsize)
+    subplots[5].annotate(text='$4$', xy=(.1,-.85),fontsize=fsize)
+
+    subplots[6].annotate(text='$0$', xy=(.1,.80),fontsize=fsize)
+    subplots[6].annotate(text='$2, 3,5,6$', xy=(.1,.3),fontsize=fsize)
+    subplots[6].annotate(text='$1, 4$', xy=(.1,-0.2),fontsize=fsize)
+
+if __name__ == '__main__':
+    # making_plot()
+    # making_plot(poly=False)
+    # making_7x1_plot()
+    making_7x1_plot(poly=False)
+
+'''
+
+'''
